@@ -29,6 +29,9 @@ logging.info(f"Connecting to MongoDB at {mongo_url}, using database {db_name}")
 client = AsyncIOMotorClient(mongo_url)
 db = client[db_name]
 
+# Initialize collections
+ads_collection = db.ads
+
 # Create the main app without a prefix
 app = FastAPI()
 
