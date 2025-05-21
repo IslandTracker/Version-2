@@ -1425,6 +1425,10 @@ async def update_ad(ad_id: str, ad_update: dict, current_admin: User = Depends(g
         raise HTTPException(status_code=404, detail="Advertisement not found")
     
     updated_ad = await ads_collection.find_one({"id": ad_id})
+    
+    # Convert MongoDB _id to string
+    updated_ad["_id"] = str(updated_ad["_id"])
+    
     return updated_ad
 
 @api_router.delete("/admin/ads/{ad_id}", status_code=204)
