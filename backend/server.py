@@ -464,6 +464,310 @@ SAMPLE_CHALLENGES = [
     }
 ]
 
+SAMPLE_BLOG_POSTS = [
+    {
+        "id": str(uuid.uuid4()),
+        "title": "Top 10 Must-Visit Islands in the Maldives",
+        "slug": "top-10-must-visit-islands-maldives",
+        "summary": "Discover the best islands to explore during your Maldives vacation, from luxury resorts to hidden local gems.",
+        "content": """
+# Top 10 Must-Visit Islands in the Maldives
+
+The Maldives archipelago comprises nearly 1,200 islands, each with its own unique charm. With so many options, it can be overwhelming to decide which ones to visit. This guide highlights ten islands that showcase the diversity and beauty of this tropical paradise.
+
+## 1. Maafushi
+
+This local island has become a popular destination for budget travelers. With its beautiful beaches, water sports activities, and authentic local experiences, Maafushi offers a perfect balance between comfort and cultural immersion.
+
+## 2. Baros
+
+One of the most luxurious resort islands, Baros boasts pristine beaches, crystal-clear waters, and world-class overwater villas. It's a favorite among honeymooners and those seeking a romantic getaway.
+
+## 3. Dhigurah
+
+Known for its long, white-sand beach and as a hotspot for whale shark sightings, Dhigurah is a must-visit for nature lovers and underwater enthusiasts.
+
+## 4. Fuvahmulah
+
+This unique island is actually an atoll in itself and hosts a rare ecosystem with freshwater lakes. It's also famous for tiger shark diving, attracting adventure seekers.
+
+## 5. Thoddoo
+
+A local agricultural island known for its fruit plantations. Thoddoo offers a different perspective on Maldivian life, beautiful beaches, and affordable guesthouses.
+
+## 6. Hithadhoo in Addu Atoll
+
+The southernmost atoll of the Maldives, Addu features a unique landscape with lush vegetation and the longest causeway in the country connecting several islands.
+
+## 7. Ukulhas
+
+A model for eco-tourism in the Maldives, Ukulhas has won awards for its waste management and environmental initiatives while offering beautiful beaches and snorkeling.
+
+## 8. Vaadhoo
+
+Famous for the "Sea of Stars" phenomenon where bioluminescent plankton create a magical nighttime display in the waters surrounding the island.
+
+## 9. Soneva Fushi
+
+An eco-luxury resort that pioneered sustainable tourism in the Maldives, offering barefoot luxury and unique experiences like treetop dining and outdoor cinemas.
+
+## 10. Hulhumale
+
+This artificial island near Male is rapidly developing and offers a glimpse into the urban future of the Maldives, with restaurants, cafes, and public beaches.
+
+## Planning Your Visit
+
+The best time to visit the Maldives is during the dry season from November to April. When visiting local islands, remember to respect cultural norms, including modest dress codes outside designated "bikini beaches."
+
+Start your island-hopping adventure with IslandLogger.mv to track and share your experiences across these beautiful destinations!
+        """,
+        "author": "Maldives Travel Expert",
+        "featured_image": "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+        "tags": ["travel guide", "islands", "vacation", "beaches"],
+        "category": "Travel Guides",
+        "is_published": True,
+        "view_count": 1245,
+        "is_featured": True,
+        "created_at": datetime.utcnow() - timedelta(days=30),
+        "updated_at": datetime.utcnow() - timedelta(days=15)
+    },
+    {
+        "id": str(uuid.uuid4()),
+        "title": "Underwater Photography: Capturing the Beauty of Maldives Marine Life",
+        "slug": "underwater-photography-maldives-marine-life",
+        "summary": "Tips and techniques for capturing stunning underwater photographs of the colorful coral reefs and marine life in the Maldives.",
+        "content": """
+# Underwater Photography: Capturing the Beauty of Maldives Marine Life
+
+The Maldives offers some of the world's most spectacular underwater landscapes and marine life. From vibrant coral gardens to graceful manta rays and colorful reef fish, the opportunities for underwater photography are endless. Here's how to make the most of your underwater photography experience in the Maldives.
+
+## Equipment Essentials
+
+### Entry Level Options
+
+If you're just starting out, consider these options:
+
+- Waterproof action cameras (GoPro, DJI Osmo Action, etc.)
+- Underwater smartphone housings (much more affordable than dedicated setups)
+- Rental equipment from your resort or dive center
+
+### Advanced Setups
+
+For serious photographers:
+
+- DSLR or mirrorless camera with an underwater housing
+- Wide-angle lenses for reef scenes and large marine life
+- Macro lenses for small creatures and details
+- Underwater strobes or lights to restore color at depth
+
+## Best Locations for Underwater Photography
+
+### North Malé Atoll
+
+- **Banana Reef**: One of the first dive sites discovered in the Maldives, featuring dramatic overhangs and colorful coral formations
+- **Shark Point**: Great for reef shark photography
+- **Hulhumalé Reef**: Accessible house reef with abundant marine life
+
+### Ari Atoll (Alifu)
+
+- **Maaya Thila**: Famous for soft corals and the chance to photograph reef sharks
+- **Manta Point**: Seasonal manta ray cleaning station (best during northeast monsoon)
+- **Fish Head**: Stunning reef formation with schooling fish and sharks
+
+### Baa Atoll
+
+- **Hanifaru Bay**: UNESCO Biosphere Reserve famous for manta rays and whale sharks (seasonal - June to November)
+- **Dhigali Haa**: Beautiful reef system with great visibility
+
+## Photography Techniques
+
+### 1. Master Buoyancy Control
+
+Before worrying about camera settings, perfect your buoyancy. This is essential for:
+- Protecting the delicate reef environment
+- Stabilizing your shots without a tripod
+- Getting close to subjects without disturbing them
+
+### 2. Get Close, Then Get Closer
+
+Water reduces color, contrast, and sharpness, so:
+- Get as close as physically possible to your subject
+- Use wide-angle lenses for larger scenes
+- Consider split shots (half above/half below the surface) for unique perspectives
+
+### 3. Understand Light and Color
+
+- Shoot during the "golden hours" (early morning or late afternoon) for the best natural light
+- Remember that colors fade with depth (red disappears first, then orange, yellow, etc.)
+- Use artificial lights (strobes/video lights) to restore true colors
+- Shoot upward toward the surface to capture light rays filtering through the water
+
+### 4. Camera Settings
+
+- Use a fast shutter speed (1/125 or faster) to freeze motion
+- Set aperture between f/8-f/16 for good depth of field
+- Increase ISO as needed (modern cameras handle higher ISOs well)
+- Consider manual white balance when shooting without strobes
+
+## Conservation Awareness
+
+- Never touch, chase, or harass marine life for a photo
+- Maintain a safe distance from all creatures
+- Be aware of your fins and equipment to avoid damaging coral
+- Follow all local marine protected area regulations
+- Consider sharing your images to support conservation efforts
+
+## Post-Processing Tips
+
+- Adjust white balance to reduce the blue/green cast
+- Increase contrast and vibrance (underwater images often look flat)
+- Consider local adjustments to balance foreground and background exposure
+- Use noise reduction software if shooting at higher ISOs
+
+Start documenting your underwater adventures with IslandLogger.mv and share your best shots with fellow travelers!
+        """,
+        "author": "Marine Photography Expert",
+        "featured_image": "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+        "tags": ["photography", "underwater", "marine life", "coral reefs"],
+        "category": "Photography",
+        "is_published": True,
+        "view_count": 968,
+        "is_featured": False,
+        "created_at": datetime.utcnow() - timedelta(days=45),
+        "updated_at": datetime.utcnow() - timedelta(days=45)
+    },
+    {
+        "id": str(uuid.uuid4()),
+        "title": "Living Like a Local: Authentic Experiences on Inhabited Maldives Islands",
+        "slug": "living-like-local-authentic-maldives-experiences",
+        "summary": "Beyond the luxury resorts, discover the rich culture and daily life on the local inhabited islands of the Maldives.",
+        "content": """
+# Living Like a Local: Authentic Experiences on Inhabited Maldives Islands
+
+While the Maldives is renowned for its luxury resorts and overwater bungalows, the local inhabited islands offer travelers a chance to experience authentic Maldivian culture, cuisine, and daily life. Here's how to immerse yourself in the local way of life during your Maldives adventure.
+
+## Choosing the Right Local Islands
+
+Not all inhabited islands are created equal when it comes to tourism infrastructure. Here are some excellent options for travelers seeking authentic experiences:
+
+### Maafushi (South Malé Atoll)
+- The pioneer of local tourism
+- Well-developed guesthouse infrastructure
+- Easy access from Malé
+- Good balance of authenticity and tourist amenities
+
+### Dhigurah (South Ari Atoll)
+- Long, beautiful beach
+- Whale shark sightings nearby
+- Relaxed atmosphere
+- Less crowded than Maafushi
+
+### Thoddoo (North Ari Atoll)
+- Agricultural island with fruit farms
+- Beautiful bikini beach
+- Fewer tourists
+- Great snorkeling
+
+### Fulidhoo (Vaavu Atoll)
+- Tiny island with traditional atmosphere
+- Famous for "Bodu Beru" cultural performances
+- Excellent diving nearby
+- Friendly community
+
+## Cultural Norms and Etiquette
+
+The Maldives is a 100% Sunni Muslim country with conservative customs on local islands:
+
+- Dress modestly in public areas (shoulders and knees covered)
+- Swimwear is only permitted on designated "bikini beaches"
+- No alcohol is available on local islands (only on resorts)
+- Remove shoes when entering homes or mosques
+- Public displays of affection are discouraged
+- Photography: Always ask before photographing locals
+- Friday is a holy day - expect limited services during prayer times
+
+## Authentic Experiences to Seek Out
+
+### 1. Traditional Cuisine
+
+Don't miss these local specialties:
+
+- **Mas Huni**: A breakfast dish of shredded tuna, coconut, onion, and chili
+- **Garudhiya**: Fresh tuna soup served with rice, lime, chili, and onions
+- **Rihaakuru**: A thick brown paste made from tuna, used as a condiment
+- **Hedhikaa**: Savory snacks like masroshi (tuna stuffed pastry) and gulha (fish dumplings)
+- **Fresh tropical fruits**: Especially local mangoes, papayas, and watermelons
+
+Where to find authentic food:
+- Local "hotaa" (cafés)
+- Small family-run restaurants
+- Homestay meals
+- Street food vendors in the evening
+
+### 2. Daily Life
+
+Immerse yourself in island rhythms:
+
+- **Morning fish market**: Watch the day's catch come in (typically early morning)
+- **Sunset harbor gathering**: Join locals at the jetty to watch the sunset
+- **Friday prayers**: Observe from a respectful distance as the community gathers
+- **School visits**: Some islands allow visitors to meet students and see education in action
+- **Joali Dhoni building**: Watch traditional boat craftsmanship on certain islands
+
+### 3. Cultural Activities
+
+Participate in these cultural experiences:
+
+- **Bodu Beru**: Traditional drumming and dancing performances
+- **Raa Bai**: Local crafts using palm leaves and coconut products
+- **Handicraft workshops**: Learn to make traditional items like 'koadi' (mats)
+- **Coconut harvesting demonstrations**: Watch skilled climbers at work
+- **Cooking classes**: Learn to prepare traditional Maldivian dishes
+
+### 4. Connect with Locals
+
+The Maldivian people are known for their hospitality:
+
+- **Holhuashi**: Public gathering places where men socialize (you may be invited to join)
+- **Undhoali**: Traditional swings where you can chat with locals
+- **Guesthouse hosts**: Often happy to share stories and local knowledge
+- **Local guides**: Hire local guides for insights only residents would know
+- **Community events**: Ask about any festivals or celebrations happening during your stay
+
+## Supporting Local Communities
+
+Tourism on local islands directly benefits communities when you:
+
+- Stay at locally-owned guesthouses
+- Eat at local restaurants
+- Hire local guides for excursions
+- Purchase souvenirs directly from artisans
+- Participate in community-based tours
+
+## Environmental Awareness
+
+Local islands face environmental challenges:
+
+- Use water consciously (many islands rely on desalination)
+- Avoid single-use plastics
+- Take all non-biodegradable waste back to Malé or dispose properly
+- Support beach clean-ups often organized by guesthouses
+- Choose marine tour operators who follow responsible practices
+
+By tracking your visits to local islands with IslandLogger.mv, you're documenting a more authentic side of the Maldives that many travelers never experience!
+        """,
+        "author": "Cultural Travel Writer",
+        "featured_image": "https://images.unsplash.com/photo-1573843981242-273fef20a9a5?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+        "tags": ["local islands", "culture", "authentic travel", "food"],
+        "category": "Cultural Experience",
+        "is_published": True,
+        "view_count": 723,
+        "is_featured": True,
+        "created_at": datetime.utcnow() - timedelta(days=15),
+        "updated_at": datetime.utcnow() - timedelta(days=15)
+    }
+]
+
 @app.on_event("startup")
 async def startup_db_client():
     # Initialize islands collection with sample data if empty
