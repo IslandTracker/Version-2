@@ -1431,6 +1431,11 @@ async def delete_ad(ad_id: str, current_admin: User = Depends(get_current_admin)
 app.include_router(api_router)
 
 # Root endpoint
+
+# Include the router in the main app
+app.include_router(api_router)
+
+# Root endpoint
 @app.get("/", response_model=dict)
 async def root():
     """Root endpoint"""
