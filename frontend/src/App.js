@@ -57,6 +57,13 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           
+          {/* Admin Dashboard Direct Route (for testing) */}
+          <Route path="/admin/dashboard" element={
+            <ProtectedRoute requireAdmin={true}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          } />
+          
           {/* Admin Routes (protected by admin check) */}
           <Route path="/admin/*" element={<AdminRoutes />} />
           
