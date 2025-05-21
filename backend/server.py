@@ -1375,6 +1375,11 @@ app.add_middleware(
 async def get_ads():
     """Get all advertisements"""
     ads = await ads_collection.find().to_list(1000)
+    
+    # Convert MongoDB _id to string
+    for ad in ads:
+        ad["_id"] = str(ad["_id"])
+    
     return ads
 
 @api_router.get("/ads/{ad_id}", response_model=dict)
@@ -1383,6 +1388,10 @@ async def get_ad(ad_id: str):
     ad = await ads_collection.find_one({"id": ad_id})
     if not ad:
         raise HTTPException(status_code=404, detail="Advertisement not found")
+    
+    # Convert MongoDB _id to string
+    ad["_id"] = str(ad["_id"])
+    
     return ad
 
 @api_router.post("/admin/ads", response_model=dict)
