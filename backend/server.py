@@ -390,6 +390,179 @@ async def get_blog_tags():
     # Flatten the list if needed
     return all_tags
 
+# Admin blog post management endpoints
+@api_router.post("/admin/blog-posts", response_model=BlogPost)
+async def create_blog_post(blog_post: BlogPost, current_admin: User = Depends(get_current_admin)):
+    # Check if slug already exists
+    existing_post = await db.blog_posts.find_one({"slug": blog_post.slug})
+    if existing_post:
+        raise HTTPException(status_code=400, detail="Blog post with this slug already exists")
+    
+    post_dict = blog_post.dict()
+    await db.blog_posts.insert_one(post_dict)
+    return blog_post
+
+@api_router.put("/admin/blog-posts/{post_id}", response_model=BlogPost)
+async def update_blog_post(post_id: str, blog_post: BlogPost, current_admin: User = Depends(get_current_admin)):
+    # Check if blog post exists
+    existing_post = await db.blog_posts.find_one({"id": post_id})
+    if not existing_post:
+        raise HTTPException(status_code=404, detail="Blog post not found")
+    
+    # Check if updating to a slug that already exists (except this post)
+    slug_exists = await db.blog_posts.find_one({"slug": blog_post.slug, "id": {"$ne": post_id}})
+    if slug_exists:
+        raise HTTPException(status_code=400, detail="Blog post with this slug already exists")
+    
+    post_dict = blog_post.dict()
+    post_dict["updated_at"] = datetime.utcnow()
+    
+    await db.blog_posts.update_one({"id": post_id}, {"$set": post_dict})
+    return blog_post
+
+@api_router.delete("/admin/blog-posts/{post_id}", status_code=204)
+async def delete_blog_post(post_id: str, current_admin: User = Depends(get_current_admin)):
+    # Check if blog post exists
+    existing_post = await db.blog_posts.find_one({"id": post_id})
+    if not existing_post:
+        raise HTTPException(status_code=404, detail="Blog post not found")
+    
+    await db.blog_posts.delete_one({"id": post_id})
+    return
+
+# Admin island management endpoints
+@api_router.post("/admin/islands", response_model=Island)
+async def admin_create_island(island: IslandCreate, current_admin: User = Depends(get_current_admin)):
+    db_island = Island(**island.dict())
+    island_dict = db_island.dict()
+    await db.islands.insert_one(island_dict)
+    return db_island
+
+@api_router.put("/admin/islands/{island_id}", response_model=Island)
+async def admin_update_island(island_id: str, island: Island, current_admin: User = Depends(get_current_admin)):
+    # Check if island exists
+    existing_island = await db.islands.find_one({"id": island_id})
+    if not existing_island:
+        raise HTTPException(status_code=404, detail="Island not found")
+    
+    island_dict = island.dict()
+    island_dict["updated_at"] = datetime.utcnow()
+    
+    await db.islands.update_one({"id": island_id}, {"$set": island_dict})
+    return island
+
+@api_router.delete("/admin/islands/{island_id}", status_code=204)
+async def admin_delete_island(island_id: str, current_admin: User = Depends(get_current_admin)):
+    # Check if island exists
+    existing_island = await db.islands.find_one({"id": island_id})
+    if not existing_island:
+        raise HTTPException(status_code=404, detail="Island not found")
+    
+    # Check if any users have visited this island
+    user_visited = await db.users.find_one({"visited_islands": island_id})
+    if user_visited:
+        raise HTTPException(
+            status_code=400, 
+            detail="Cannot delete island that has been visited by users. Consider disabling it instead."
+        )
+    
+    await db.islands.delete_one({"id": island_id})
+    return
+
+# Admin user management endpoints
+@api_router.get("/admin/users", response_model=List[User])
+async def admin_get_users(
+    skip: int = 0, 
+    limit: int = 100, 
+    search: Optional[str] = None,
+    current_admin: User = Depends(get_current_admin)
+):
+    query = {}
+    
+    if search:
+        query["$or"] = [
+            {"email": {"$regex": search, "$options": "i"}},
+            {"name": {"$regex": search, "$options": "i"}}
+        ]
+    
+    # Sort by created_at descending (newest first)
+    cursor = db.users.find(query).sort("created_at", -1).skip(skip).limit(limit)
+    users = await cursor.to_list(length=limit)
+    
+    return [User(**user) for user in users]
+
+@api_router.put("/admin/users/{user_id}", response_model=User)
+async def admin_update_user(user_id: str, user_update: UserBase, current_admin: User = Depends(get_current_admin)):
+    # Check if user exists
+    existing_user = await db.users.find_one({"id": user_id})
+    if not existing_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Prepare update dict
+    update_dict = user_update.dict(exclude_unset=True)
+    update_dict["updated_at"] = datetime.utcnow()
+    
+    await db.users.update_one({"id": user_id}, {"$set": update_dict})
+    
+    # Get updated user
+    updated_user = await db.users.find_one({"id": user_id})
+    return User(**updated_user)
+
+@api_router.delete("/admin/users/{user_id}", status_code=204)
+async def admin_delete_user(user_id: str, current_admin: User = Depends(get_current_admin)):
+    # Check if user exists
+    existing_user = await db.users.find_one({"id": user_id})
+    if not existing_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Prevent deleting admin users
+    if existing_user.get("is_admin", False):
+        raise HTTPException(status_code=400, detail="Cannot delete admin users")
+    
+    await db.users.delete_one({"id": user_id})
+    
+    # Also clean up any visits by this user
+    await db.visits.delete_many({"user_id": user_id})
+    
+    return
+
+# Admin challenge management endpoints
+@api_router.post("/admin/challenges", response_model=Challenge)
+async def admin_create_challenge(challenge: Challenge, current_admin: User = Depends(get_current_admin)):
+    challenge_dict = challenge.dict()
+    await db.challenges.insert_one(challenge_dict)
+    return challenge
+
+@api_router.put("/admin/challenges/{challenge_id}", response_model=Challenge)
+async def admin_update_challenge(challenge_id: str, challenge: Challenge, current_admin: User = Depends(get_current_admin)):
+    # Check if challenge exists
+    existing_challenge = await db.challenges.find_one({"id": challenge_id})
+    if not existing_challenge:
+        raise HTTPException(status_code=404, detail="Challenge not found")
+    
+    challenge_dict = challenge.dict()
+    
+    await db.challenges.update_one({"id": challenge_id}, {"$set": challenge_dict})
+    return challenge
+
+@api_router.delete("/admin/challenges/{challenge_id}", status_code=204)
+async def admin_delete_challenge(challenge_id: str, current_admin: User = Depends(get_current_admin)):
+    # Check if challenge exists
+    existing_challenge = await db.challenges.find_one({"id": challenge_id})
+    if not existing_challenge:
+        raise HTTPException(status_code=404, detail="Challenge not found")
+    
+    # Check if any users are currently participating in this challenge
+    user_participating = await db.users.find_one({"active_challenges": challenge_id})
+    if user_participating:
+        raise HTTPException(
+            status_code=400, 
+            detail="Cannot delete challenge that users are participating in. Consider disabling it instead."
+        )
+    
+    await db.challenges.delete_one({"id": challenge_id})
+    return
+
 # Sample data initialization
 SAMPLE_ISLANDS = [
     {
