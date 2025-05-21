@@ -462,6 +462,24 @@ async def startup_db_client():
     if await db.challenges.count_documents({}) == 0:
         await db.challenges.insert_many(SAMPLE_CHALLENGES)
         logging.info("Initialized challenges collection with sample data")
+    
+    # Add a test user if it doesn't exist
+    test_user = await db.users.find_one({"email": "test@example.com"})
+    if not test_user:
+        hashed_password = get_password_hash("test123")
+        test_user = {
+            "id": str(uuid.uuid4()),
+            "email": "test@example.com",
+            "name": "Test User",
+            "hashed_password": hashed_password,
+            "visited_islands": [],
+            "badges": [],
+            "active_challenges": [],
+            "created_at": datetime.utcnow(),
+            "updated_at": datetime.utcnow()
+        }
+        await db.users.insert_one(test_user)
+        logging.info("Created test user: test@example.com")
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
