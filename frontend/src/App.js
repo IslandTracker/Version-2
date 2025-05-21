@@ -38,8 +38,14 @@ function App() {
       <BrowserRouter>
         <ToastContainer position="top-right" autoClose={3000} />
         <Routes>
-          {/* Admin Routes */}
+          {/* Admin Login (outside of protected routes) */}
           <Route path="/admin/login" element={<AdminLogin />} />
+          
+          {/* Public Login/Register Pages (outside of layout) */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          
+          {/* Admin Routes (protected by admin check) */}
           <Route path="/admin/*" element={<AdminRoutes />} />
           
           {/* Public Routes with Navbar and Footer */}
