@@ -18,6 +18,7 @@ const Footer = () => {
               <li><Link to="/map" className="hover:text-white">Interactive Map</Link></li>
               <li><Link to="/islands" className="hover:text-white">Islands Directory</Link></li>
               <li><Link to="/challenges" className="hover:text-white">Challenges</Link></li>
+              <li><Link to="/blog" className="hover:text-white">Travel Blog</Link></li>
             </ul>
           </div>
           <div>
