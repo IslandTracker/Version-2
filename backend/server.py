@@ -238,32 +238,31 @@ async def get_current_admin(current_user: User = Depends(get_current_user)):
 # Authentication endpoints
 @api_router.post("/token", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
-    # Print debug info
-    logging.info(f"Login attempt for user: {form_data.username}")
-    
-    user = await authenticate_user(form_data.username, form_data.password)
-    if not user:
-        logging.error(f"Authentication failed for user: {form_data.username}")
-        # Let's check if user exists but password is incorrect
-        db_user = await get_user(form_data.username)
-        if db_user:
-            logging.error("User exists but password verification failed")
-        else:
-            logging.error("User does not exist")
-            
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password",
-            headers={"WWW-Authenticate": "Bearer"},
+    """Authenticate user and return JWT token"""
+    try:
+        user = await authenticate_user(form_data.username, form_data.password)
+        if not user:
+            logging.error(f"Authentication failed for user: {form_data.username}")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid username or password",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+
+        # Generate JWT token with 30-day expiration
+        access_token_expires = timedelta(days=30)
+        access_token = create_access_token(
+            data={"sub": user["email"]}, expires_delta=access_token_expires
         )
-    
-    # Authentication successful
-    logging.info(f"Authentication successful for user: {form_data.username}")
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": user.email}, expires_delta=access_token_expires
-    )
-    return {"access_token": access_token, "token_type": "bearer"}
+        logging.info(f"Authentication successful for user: {form_data.username}")
+        
+        return {"access_token": access_token, "token_type": "bearer"}
+    except Exception as e:
+        logging.error(f"Login error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Login error: {str(e)}",
+        )
 
 # User endpoints
 @api_router.post("/users", response_model=User)
