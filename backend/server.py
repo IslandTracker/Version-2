@@ -205,9 +205,27 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         token_data = TokenData(email=email)
     except JWTError:
         raise credentials_exception
-    user = await get_user(email=token_data.email)
-    if user is None:
+    
+    user_dict = await db.users.find_one({"email": token_data.email})
+    if user_dict is None:
         raise credentials_exception
+        
+    # Explicitly convert to Pydantic model
+    user_data = {
+        "id": user_dict.get("id"),
+        "email": user_dict.get("email"),
+        "name": user_dict.get("name"),
+        "hashed_password": user_dict.get("hashed_password"),
+        "is_admin": bool(user_dict.get("is_admin", False)),  # Ensure boolean conversion
+        "created_at": user_dict.get("created_at"),
+        "updated_at": user_dict.get("updated_at"),
+        "visited_islands": user_dict.get("visited_islands", []),
+        "badges": user_dict.get("badges", []),
+        "active_challenges": user_dict.get("active_challenges", [])
+    }
+    
+    user = User(**user_data)
+    logging.info(f"User authenticated: {user.email}, is_admin: {user.is_admin}")
     return user
 
 async def get_current_admin(current_user: User = Depends(get_current_user)):
