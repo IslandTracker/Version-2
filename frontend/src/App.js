@@ -118,10 +118,12 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
         
         console.log("Auth check:", response.data);
         
+        // Strictly check admin status for admin routes
+        const isAdminUser = response.data.is_admin === true;
         setIsAuthenticated(true);
-        // Check explicitly for the is_admin field
-        setIsAdmin(response.data.is_admin === true);
-        console.log("Admin check:", response.data.is_admin, "Set to:", response.data.is_admin === true);
+        setIsAdmin(isAdminUser);
+        
+        console.log("Admin check:", response.data.is_admin, "isAdminUser:", isAdminUser);
       } catch (error) {
         console.error("Authentication error:", error);
         localStorage.removeItem("token");
