@@ -81,14 +81,15 @@ const AdminLogin = () => {
       if (userResponse.data.is_admin === true) {
         // Successfully authenticated as admin
         console.log("Admin authentication successful, redirecting to dashboard");
-        navigate('/admin/dashboard');
+        // Use replace: true to prevent back navigation to login page
+        navigate('/admin/dashboard', { replace: true });
         return;
       }
       
       // Not an admin user
       console.log("User is not an admin:", userResponse.data);
       setError('You do not have administrator privileges');
-      localStorage.removeItem('token');
+      localStorage.removeItem('token'); // Remove token for non-admin users
     } catch (err) {
       console.error('Admin login error:', err);
       setError('Failed to login. Please check your credentials and try again.');
