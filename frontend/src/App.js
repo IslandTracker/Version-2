@@ -6,6 +6,9 @@ import "./App.css";
 // Components
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import AdminLayout from "./components/AdminLayout";
+
+// Pages
 import Home from "./pages/Home";
 import Map from "./pages/Map";
 import IslandList from "./pages/IslandList";
