@@ -71,8 +71,7 @@ const Dashboard = () => {
           }).catch(() => ({ data: [] })) // Handle if endpoint doesn't exist yet
         ]);
         
-        // Update user data
-        updateUserData();
+        // Don't call updateUserData() here as it will cause an infinite loop
         
         // Set visited islands
         setVisitedIslands(userResponse.data.visited_islands);
