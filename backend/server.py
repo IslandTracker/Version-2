@@ -1431,9 +1431,22 @@ async def delete_ad(ad_id: str, current_admin: User = Depends(get_current_admin)
 app.include_router(api_router)
 
 # Root endpoint
-
-# Include the router in the main app
-app.include_router(api_router)
+@app.get("/", response_model=dict)
+async def root():
+    """Root endpoint"""
+    return {
+        "message": "Maldives Island Tracker API",
+        "version": "1.0.0",
+        "endpoints": [
+            "/api/islands",
+            "/api/badges",
+            "/api/challenges",
+            "/api/blog-posts",
+            "/api/users",
+            "/api/token",
+            "/api/ads"
+        ]
+    }
 
 # Root endpoint
 @app.get("/", response_model=dict)
