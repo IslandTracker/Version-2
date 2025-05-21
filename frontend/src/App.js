@@ -132,8 +132,8 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
   }
 
   if (!isAuthenticated) {
-    // Redirect to login if not authenticated
-    return <Navigate to="/login" />;
+    // Redirect to the appropriate login page
+    return <Navigate to={requireAdmin ? "/admin/login" : "/login"} />;
   }
 
   if (requireAdmin && !isAdmin) {
