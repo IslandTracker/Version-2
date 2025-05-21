@@ -46,9 +46,9 @@ const AdminLogin = () => {
       setLoading(true);
       setError('');
       
-      // Special case for superadmin
+      // Special handling for known admin
       if (data.email === 'superadmin@islandlogger.mv') {
-        console.log("Attempting superadmin login");
+        console.log("Processing admin login for:", data.email);
       }
       
       // Try to login
@@ -56,10 +56,12 @@ const AdminLogin = () => {
       formData.append('username', data.email);
       formData.append('password', data.password);
 
-      // Use direct API call instead of the login function to prevent automatic redirects
+      // Use direct API call instead of the login function
+      console.log("Submitting login request to:", `${API}/token`);
       const response = await axios.post(`${API}/token`, formData);
       const { access_token } = response.data;
       
+      // Store the token
       localStorage.setItem('token', access_token);
       
       // Check if user is admin
@@ -67,16 +69,19 @@ const AdminLogin = () => {
         headers: { Authorization: `Bearer ${access_token}` }
       });
       
-      console.log("Admin login check:", userResponse.data);
+      console.log("User data from API:", userResponse.data);
+      console.log("Admin flag value:", userResponse.data.is_admin);
       
       // Use strict comparison with the boolean value true
       if (userResponse.data.is_admin === true) {
         // Successfully authenticated as admin
+        console.log("Admin authentication successful, redirecting to dashboard");
         navigate('/admin/dashboard');
         return;
       }
       
       // Not an admin user
+      console.log("User is not an admin:", userResponse.data);
       setError('You do not have administrator privileges');
       localStorage.removeItem('token');
     } catch (err) {
