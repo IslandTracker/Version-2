@@ -199,6 +199,7 @@ const Challenges = () => {
       console.error('Error joining challenge:', err);
       setError('Failed to join challenge. Please try again.');
       toast.error('Failed to join challenge. Please try again.');
+      toast.error('Failed to join challenge. Please try again.');
     } finally {
       setLoading(false);
     }
