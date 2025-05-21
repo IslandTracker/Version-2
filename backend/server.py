@@ -128,7 +128,14 @@ class Challenge(BaseModel):
 
 # Helper functions
 def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
+    logging.info("Verifying password")
+    try:
+        result = pwd_context.verify(plain_password, hashed_password)
+        logging.info(f"Password verification result: {result}")
+        return result
+    except Exception as e:
+        logging.error(f"Error verifying password: {e}")
+        return False
 
 def get_password_hash(password):
     return pwd_context.hash(password)
