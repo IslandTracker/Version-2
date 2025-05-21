@@ -161,17 +161,33 @@ const Challenges = () => {
 
   const handleJoinChallenge = async (challengeId) => {
     try {
-      // In a full implementation, we'd call the API to join the challenge
-      console.log(`Joining challenge: ${challengeId}`);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('You must be logged in to join challenges');
+        return;
+      }
+
+      setLoading(true);
+      
+      // In a real implementation, we'd call the API to join the challenge
+      // For now, we'll just simulate it
+      await new Promise(resolve => setTimeout(resolve, 500)); // Simulate API call
       
       // Update the UI to show the challenge as joined
-      setActiveChallenges(prev => [...prev, challenges.find(c => c.id === challengeId)]);
+      const challengeToJoin = challenges.find(c => c.id === challengeId);
+      if (challengeToJoin) {
+        setActiveChallenges(prev => [...prev, challengeToJoin]);
+        
+        // Remove from available challenges
+        setChallenges(prev => prev.filter(c => c.id !== challengeId));
+      }
       
-      // Update user data
-      updateUserData();
+      setError(null);
     } catch (err) {
       console.error('Error joining challenge:', err);
       setError('Failed to join challenge. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
