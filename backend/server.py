@@ -96,6 +96,7 @@ class User(UserBase):
     active_challenges: List[str] = []
 
 class UserInDB(User):
+    # Ensure this model matches User including the is_admin field
     pass
 
 class VisitBase(BaseModel):
