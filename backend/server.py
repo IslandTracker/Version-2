@@ -1444,20 +1444,13 @@ async def delete_ad(ad_id: str, current_admin: User = Depends(get_current_admin)
 # Include the router in the main app
 app.include_router(api_router)
 
-# Root endpoint
-@app.get("/", response_model=dict)
-async def root():
-    """Root endpoint"""
-    return {
-        "message": "Maldives Island Tracker API",
-        "version": "1.0.0",
-        "endpoints": [
-            "/api/islands",
-            "/api/badges",
-            "/api/challenges",
-            "/api/blog-posts",
-            "/api/users",
-            "/api/token",
-            "/api/ads"
-        ]
-    }
+@api_router.get("/admin-check", response_model=dict)
+async def check_admin_access(current_user: User = Depends(get_current_user)):
+    """Check if the current user has admin access"""
+    if current_user.is_admin:
+        return {"is_admin": True, "message": "User has admin access"}
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="User does not have admin access"
+        )
