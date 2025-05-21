@@ -784,6 +784,11 @@ async def startup_db_client():
     if await db.challenges.count_documents({}) == 0:
         await db.challenges.insert_many(SAMPLE_CHALLENGES)
         logging.info("Initialized challenges collection with sample data")
+        
+    # Initialize blog posts collection with sample data if empty
+    if await db.blog_posts.count_documents({}) == 0:
+        await db.blog_posts.insert_many(SAMPLE_BLOG_POSTS)
+        logging.info("Initialized blog posts collection with sample data")
     
     # Add a test user if it doesn't exist
     test_user = await db.users.find_one({"email": "test@example.com"})
@@ -802,6 +807,25 @@ async def startup_db_client():
         }
         await db.users.insert_one(test_user)
         logging.info("Created test user: test@example.com")
+        
+    # Add admin user if it doesn't exist
+    admin_user = await db.users.find_one({"email": "admin@islandlogger.mv"})
+    if not admin_user:
+        hashed_password = get_password_hash("admin123")
+        admin_user = {
+            "id": str(uuid.uuid4()),
+            "email": "admin@islandlogger.mv",
+            "name": "Admin User",
+            "hashed_password": hashed_password,
+            "is_admin": True,
+            "visited_islands": [],
+            "badges": [],
+            "active_challenges": [],
+            "created_at": datetime.utcnow(),
+            "updated_at": datetime.utcnow()
+        }
+        await db.users.insert_one(admin_user)
+        logging.info("Created admin user: admin@islandlogger.mv")
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
