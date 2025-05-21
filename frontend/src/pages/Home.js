@@ -236,6 +236,81 @@ const Home = () => {
           </div>
         </div>
       </div>
+
+      {/* Featured Blog Posts Section */}
+      <div className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+              Travel Inspiration
+            </h2>
+            <p className="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
+              Discover tips, guides, and stories from our Maldives travel blog
+            </p>
+          </div>
+
+          {loading ? (
+            <div className="flex justify-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            </div>
+          ) : featuredPosts.length > 0 ? (
+            <div className="grid gap-8 md:grid-cols-3">
+              {featuredPosts.map(post => (
+                <div key={post.id} className="bg-white rounded-lg shadow-lg overflow-hidden transition duration-300 hover:shadow-xl">
+                  <div className="relative h-48 overflow-hidden">
+                    {post.featured_image ? (
+                      <img 
+                        src={post.featured_image} 
+                        alt={post.title} 
+                        className="w-full h-full object-cover transform hover:scale-105 transition duration-500"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-12 h-12 text-gray-400">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z" />
+                        </svg>
+                      </div>
+                    )}
+                    <div className="absolute top-2 right-2">
+                      <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">
+                        {post.category}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">
+                      <Link to={`/blog/${post.slug}`} className="hover:text-blue-600">{post.title}</Link>
+                    </h3>
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">{post.summary}</p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-500">By {post.author}</span>
+                      <Link 
+                        to={`/blog/${post.slug}`} 
+                        className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        Read More →
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-500">No featured articles available at this time.</p>
+            </div>
+          )}
+
+          <div className="mt-10 text-center">
+            <Link 
+              to="/blog" 
+              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+            >
+              View All Articles
+            </Link>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
