@@ -110,93 +110,85 @@ const PublicLayout = () => {
 // Protected Route component with admin access control
 const ProtectedRoute = ({ children, requireAdmin = false }) => {
   const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   useEffect(() => {
-    // Check if user is authenticated
-    const checkAuth = async () => {
-      setCheckingAuth(true);
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setIsAuthenticated(false);
-        setCheckingAuth(false);
-        return;
-      }
-
+    const verifyAuth = async () => {
       try {
-        const response = await axios.get(`${API}/users/me`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        
-        console.log("Auth check response:", response.data);
-        
-        // Strictly check admin status for admin routes
-        const isAdminUser = response.data.is_admin === true;
-        setIsAuthenticated(true);
-        setIsAdmin(isAdminUser);
-        
-        // Log auth status for debugging
-        console.log("Auth status:", {
-          isAuthenticated: true,
-          isAdmin: isAdminUser,
-          requireAdmin
-        });
-      } catch (error) {
-        console.error("Authentication error:", error);
-        localStorage.removeItem("token");
-        setIsAuthenticated(false);
-        setIsAdmin(false);
+        setIsCheckingAuth(true);
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          console.log("No token found, redirecting to login");
+          setIsAuthenticated(false);
+          setIsAdmin(false);
+          return;
+        }
+
+        // Verify token and get user info
+        try {
+          const userResponse = await axios.get(`${BACKEND_URL}/api/users/me`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          
+          const userData = userResponse.data;
+          console.log("User data:", userData);
+          
+          setIsAuthenticated(true);
+          // Explicitly check for boolean true to avoid type coercion issues
+          setIsAdmin(userData.is_admin === true);
+          
+          // Log auth status for debugging
+          console.log("Auth status:", {
+            isAuthenticated: true,
+            isAdmin: userData.is_admin === true,
+            requireAdmin,
+          });
+          
+          // If route requires admin but user is not admin, redirect
+          if (requireAdmin && userData.is_admin !== true) {
+            console.warn("User is not an admin but tried to access admin route");
+            navigate('/login', { replace: true });
+          }
+        } catch (error) {
+          console.error("Token validation error:", error);
+          localStorage.removeItem("token");
+          setIsAuthenticated(false);
+          setIsAdmin(false);
+        }
       } finally {
-        setCheckingAuth(false);
+        setIsCheckingAuth(false);
       }
     };
 
-    checkAuth();
-  }, [requireAdmin]);
+    verifyAuth();
+  }, [navigate, requireAdmin]);
 
-  if (checkingAuth) {
-    // Show loading indicator while checking auth
+  // Show loading indicator while checking auth
+  if (isCheckingAuth) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    // Redirect to appropriate login page
-    console.log("Not authenticated, redirecting to", requireAdmin ? "/admin/login" : "/login");
-    return <Navigate to={requireAdmin ? "/admin/login" : "/login"} />;
-  }
-
-  if (requireAdmin && !isAdmin) {
-    // Show access denied for non-admin users trying to access admin routes
-    console.log("Access denied: User is not an admin");
-    return (
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-        <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
-          <div className="flex items-center justify-center text-red-500 mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
-          </div>
-          <h1 className="text-2xl font-bold text-center text-gray-800 mb-4">Access Denied</h1>
-          <p className="text-gray-600 text-center mb-6">
-            You do not have administrator privileges to access this area.
-          </p>
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="p-8 max-w-md w-full bg-white rounded-lg shadow-md">
           <div className="flex justify-center">
-            <button
-              onClick={() => navigate("/")}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            >
-              Return to Home
-            </button>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
           </div>
+          <p className="text-center mt-4 text-gray-600">Verifying authentication...</p>
         </div>
       </div>
     );
+  }
+
+  // If authentication is required and user is not authenticated
+  if (!isAuthenticated) {
+    return <Navigate to={requireAdmin ? "/admin/login" : "/login"} replace />;
+  }
+
+  // If admin access is required and user is not admin
+  if (requireAdmin && !isAdmin) {
+    console.log("User is not admin but route requires admin");
+    return <Navigate to="/login" replace />;
   }
 
   return children;
