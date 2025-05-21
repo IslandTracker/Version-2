@@ -127,6 +127,22 @@ class Challenge(BaseModel):
     reward: Dict[str, Any]
     is_active: bool = True
     created_at: datetime = Field(default_factory=datetime.utcnow)
+    
+class BlogPost(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    slug: str
+    content: str
+    summary: str
+    author: str
+    featured_image: Optional[str] = None
+    tags: List[str] = []
+    category: str
+    is_published: bool = True
+    view_count: int = 0
+    is_featured: bool = False
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
 
 # Helper functions
 def verify_password(plain_password, hashed_password):
