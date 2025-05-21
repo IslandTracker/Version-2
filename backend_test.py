@@ -67,6 +67,9 @@ class IslandLoggerAPITester:
     def test_token_login(self, email, password):
         """Test login with OAuth2 token endpoint"""
         # Create form data for OAuth2 password flow
+        import requests
+        
+        url = f"{self.base_url}/api/token"
         form_data = {
             'username': email,
             'password': password
@@ -76,14 +79,33 @@ class IslandLoggerAPITester:
             'Accept': 'application/json'
         }
         
-        success, response = self.run_test(
-            "Token Login",
-            "POST",
-            "api/token",
-            200,
-            data=form_data,
-            headers=headers
-        )
+        print(f"Sending token request to: {url}")
+        print(f"With data: {form_data}")
+        
+        self.tests_run += 1
+        print(f"\n🔍 Testing Token Login...")
+        
+        try:
+            response = requests.post(url, data=form_data, headers=headers)
+            
+            success = response.status_code == 200
+            if success:
+                self.tests_passed += 1
+                print(f"✅ Passed - Status: {response.status_code}")
+                response_data = response.json()
+                print(f"Response: {json.dumps(response_data, indent=2)}")
+                return success, response_data
+            else:
+                print(f"❌ Failed - Expected 200, got {response.status_code}")
+                try:
+                    print(f"Response: {response.json()}")
+                except:
+                    print(f"Response: {response.text}")
+                return False, {}
+                
+        except Exception as e:
+            print(f"❌ Failed - Error: {str(e)}")
+            return False, {}
         
         if success and 'access_token' in response:
             self.token = response['access_token']
