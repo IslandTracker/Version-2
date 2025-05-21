@@ -1118,39 +1118,40 @@ async def startup_db_client():
 async def shutdown_db_client():
     client.close()
 
-@app.get("/create-admin/{password}")
-async def create_admin(password: str):
-    # Hash the provided password
-    hashed_password = get_password_hash(password)
+@api_router.post("/create-admin/{admin_password}")
+async def create_admin(admin_password: str):
+    """Create a super admin user (for testing purposes only)"""
+    if admin_password != "myadminpassword":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Invalid admin password",
+        )
     
-    # Create a new superadmin user
-    admin_id = str(uuid.uuid4())
-    superadmin_data = {
-        "id": admin_id,
+    # Check if admin already exists
+    admin_user = await db.users.find_one({"email": "superadmin@islandlogger.mv"})
+    
+    if admin_user:
+        # Update the user to ensure admin access
+        await db.users.update_one(
+            {"email": "superadmin@islandlogger.mv"},
+            {"$set": {"is_admin": True}}
+        )
+        return {"message": "Admin user already exists and has been updated with admin privileges"}
+    
+    # Create admin user
+    hashed_password = get_password_hash("super123")
+    admin_user = {
+        "id": str(uuid.uuid4()),
         "email": "superadmin@islandlogger.mv",
         "name": "Super Admin",
         "hashed_password": hashed_password,
         "is_admin": True,
-        "visited_islands": [],
-        "badges": [],
-        "active_challenges": [],
-        "created_at": datetime.utcnow(),
-        "updated_at": datetime.utcnow()
+        "created_at": datetime.now(),
+        "updated_at": datetime.now(),
     }
     
-    # Check if superadmin already exists
-    existing_admin = await db.users.find_one({"email": "superadmin@islandlogger.mv"})
-    if existing_admin:
-        # Update password
-        await db.users.update_one(
-            {"email": "superadmin@islandlogger.mv"},
-            {"$set": {"hashed_password": hashed_password}}
-        )
-        return {"message": "Superadmin password updated", "id": existing_admin["id"]}
-    else:
-        # Insert new superadmin
-        await db.users.insert_one(superadmin_data)
-        return {"message": "Superadmin created", "id": admin_id}
+    await db.users.insert_one(admin_user)
+    return {"message": "Admin user created successfully"}
 
 @app.get("/debug-user/{email}")
 async def debug_user(email: str):
