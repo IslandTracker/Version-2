@@ -1447,9 +1447,3 @@ async def root():
             "/api/ads"
         ]
     }
-
-# Root endpoint
-@app.get("/", response_model=dict)
-async def root():
-    """Root endpoint"""
-    return {"message": "Maldives Island Tracker API", "version": "1.0.0"}
