@@ -36,7 +36,9 @@ const AdminLogin = () => {
         headers: { Authorization: `Bearer ${access_token}` }
       });
       
-      if (userResponse.data.is_admin) {
+      console.log("Admin login check:", userResponse.data);
+      
+      if (userResponse.data.is_admin === true) {
         // Redirect to admin dashboard
         navigate('/admin/dashboard');
       } else {
