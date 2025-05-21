@@ -265,6 +265,28 @@ class MaldivesIslandTrackerAPITest(unittest.TestCase):
         self.assertEqual(user["email"], self.admin_email)
         self.assertTrue(user["is_admin"])
         logger.info("Admin login test passed")
+        
+    def test_15a_superadmin_login(self):
+        """Test superadmin login specifically for the admin dashboard"""
+        logger.info("Testing superadmin login for admin dashboard")
+        login_data = {
+            "username": "superadmin@islandlogger.mv",
+            "password": "super123"
+        }
+        response = requests.post(f"{self.api_url}/token", data=login_data)
+        self.assertEqual(response.status_code, 200)
+        token_data = response.json()
+        self.assertIn("access_token", token_data)
+        self.assertIn("token_type", token_data)
+        
+        # Verify this is an admin user
+        headers = {"Authorization": f"Bearer {token_data['access_token']}"}
+        response = requests.get(f"{self.api_url}/users/me", headers=headers)
+        self.assertEqual(response.status_code, 200)
+        user = response.json()
+        self.assertEqual(user["email"], "superadmin@islandlogger.mv")
+        self.assertTrue(user["is_admin"])
+        logger.info("Superadmin login test passed")
 
     def test_16_admin_get_users(self):
         """Test admin getting the list of users"""
