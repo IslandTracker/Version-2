@@ -59,6 +59,16 @@ const VisitForm = () => {
     fetchData();
   }, [islandId, setValue]);
 
+  // Handle file selection
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    setSelectedFiles(files);
+    
+    // Create temporary local URLs for preview
+    const localUrls = files.map(file => URL.createObjectURL(file));
+    setUploadedImageUrls(localUrls);
+  };
+  
   const onSubmit = async (data) => {
     if (!currentUser) {
       navigate('/login');
@@ -74,9 +84,9 @@ const VisitForm = () => {
       // For demo purposes, convert the string date to ISO format
       data.visit_date = new Date(data.visit_date).toISOString();
       
-      // In a real app, you'd handle photo uploads here
-      // For now, use empty array for photo_urls
-      data.photo_urls = [];
+      // In a real app, we'd upload the files here
+      // For now, just use the local URLs for demonstration
+      data.photo_urls = uploadedImageUrls;
       
       await axios.post(`${API}/visits`, data, {
         headers: { Authorization: `Bearer ${token}` }
