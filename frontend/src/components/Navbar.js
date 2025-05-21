@@ -30,6 +30,9 @@ const Navbar = () => {
               <Link to="/islands" className="inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-white text-sm font-medium">
                 Islands
               </Link>
+              <Link to="/blog" className="inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-white text-sm font-medium">
+                Blog
+              </Link>
               {currentUser && (
                 <>
                   <Link to="/dashboard" className="inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-white text-sm font-medium">
