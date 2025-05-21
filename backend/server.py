@@ -392,6 +392,81 @@ async def get_badge(badge_id: str):
             return badge
     raise HTTPException(status_code=404, detail="Badge not found")
 
+# Challenge endpoints
+@api_router.get("/challenges", response_model=List[Challenge])
+async def get_challenges():
+    """Get all challenges"""
+    challenges = [
+        {
+            "id": "1",
+            "name": "Kaafu Atoll Explorer",
+            "description": "Visit 3 islands in Kaafu Atoll",
+            "objective": {"atoll": "Kaafu", "count": 3},
+            "duration_days": 90,
+            "reward": {"badge": "Kaafu Expert", "points": 500},
+            "is_active": True,
+            "created_at": datetime.now()
+        },
+        {
+            "id": "2",
+            "name": "Local Island Experience",
+            "description": "Visit 5 inhabited islands to experience local Maldivian culture",
+            "objective": {"island_type": "inhabited", "count": 5},
+            "duration_days": 180,
+            "reward": {"badge": "Cultural Immersion", "points": 750},
+            "is_active": True,
+            "created_at": datetime.now()
+        },
+        {
+            "id": "3",
+            "name": "Resort Connoisseur",
+            "description": "Visit 3 different resort islands",
+            "objective": {"island_type": "resort", "count": 3},
+            "duration_days": 365,
+            "reward": {"badge": "Luxury Traveler", "points": 500},
+            "is_active": True,
+            "created_at": datetime.now()
+        }
+    ]
+    return challenges
+
+@api_router.get("/challenges/{challenge_id}", response_model=Challenge)
+async def get_challenge(challenge_id: str):
+    """Get a challenge by ID"""
+    challenges = await get_challenges()
+    for challenge in challenges:
+        if challenge["id"] == challenge_id:
+            return challenge
+    raise HTTPException(status_code=404, detail="Challenge not found")
+
+@api_router.post("/challenges/{challenge_id}/join", status_code=status.HTTP_201_CREATED)
+async def join_challenge(challenge_id: str, current_user: User = Depends(get_current_user)):
+    """Join a challenge"""
+    # Verify challenge exists
+    challenge = await get_challenge(challenge_id)
+    if not challenge:
+        raise HTTPException(status_code=404, detail="Challenge not found")
+    
+    # Update user's active challenges
+    user = await db.users.find_one({"id": current_user.id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Check if user already joined this challenge
+    if challenge_id in user.get("active_challenges", []):
+        raise HTTPException(status_code=400, detail="User already joined this challenge")
+    
+    # Add challenge to user's active challenges
+    active_challenges = user.get("active_challenges", [])
+    active_challenges.append(challenge_id)
+    
+    await db.users.update_one(
+        {"id": current_user.id},
+        {"$set": {"active_challenges": active_challenges}}
+    )
+    
+    return {"message": "Successfully joined challenge"}
+
 # Blog post endpoints
 @api_router.get("/blog-posts", response_model=List[BlogPost])
 async def get_blog_posts(
