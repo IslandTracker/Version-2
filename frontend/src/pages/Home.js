@@ -263,6 +263,75 @@ const Home = () => {
           </div>
         </div>
       </div>
+      
+      {/* Ongoing Challenges Section */}
+      <div className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+              Ongoing Challenges
+            </h2>
+            <p className="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
+              Join these challenges and earn special badges as you explore the Maldives
+            </p>
+          </div>
+
+          {challengesLoading ? (
+            <div className="flex justify-center my-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            </div>
+          ) : ongoingChallenges.length > 0 ? (
+            <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {ongoingChallenges.map(challenge => (
+                <div key={challenge.id} className="challenge-card bg-white rounded-lg overflow-hidden shadow-lg border border-gray-200">
+                  <div className="h-48 overflow-hidden">
+                    <img 
+                      src={challenge.image_url} 
+                      alt={challenge.name} 
+                      className="w-full h-full object-cover" 
+                    />
+                    <div className="absolute top-2 right-2">
+                      <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">
+                        {challenge.days_left} days left
+                      </span>
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">{challenge.name}</h3>
+                    <p className="text-gray-600 mb-4">{challenge.description}</p>
+                    
+                    <div className="flex justify-between items-center mb-4">
+                      <div className="text-sm text-gray-600">
+                        <span className="font-medium">Reward:</span> {challenge.reward.badge}
+                      </div>
+                    </div>
+                    
+                    <Link 
+                      to="/challenges" 
+                      className="w-full block text-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition duration-200"
+                    >
+                      Join Challenge
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-500">No active challenges available at this time.</p>
+            </div>
+          )}
+          
+          <div className="mt-12 text-center">
+            <Link
+              to="/challenges"
+              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
+            >
+              View All Challenges
+            </Link>
+          </div>
+        </div>
+      </div>
 
       {/* CTA Section */}
       <div className="py-16 bg-blue-700">
