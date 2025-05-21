@@ -83,10 +83,12 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str
+    is_admin: bool = False
 
 class User(UserBase):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     hashed_password: str
+    is_admin: bool = False
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
     visited_islands: List[str] = []
