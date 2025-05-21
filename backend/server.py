@@ -1299,19 +1299,30 @@ async def create_admin(admin_password: str):
     await db.users.insert_one(admin_user)
     return {"message": "Admin user created successfully"}
 
-@app.get("/debug-user/{email}")
-async def debug_user(email: str):
-    user_dict = await db.users.find_one({"email": email})
-    if not user_dict:
-        return {"status": "User not found"}
-    
-    # Return only specific fields we care about
-    return {
-        "email": user_dict.get("email"),
-        "name": user_dict.get("name"),
-        "is_admin": user_dict.get("is_admin", False),
-        "id": user_dict.get("id")
-    }
+@api_router.post("/debug-login")
+async def debug_login(email: str = Body(...), password: str = Body(...)):
+    """Debug endpoint for login issues"""
+    try:
+        user = await authenticate_user(email, password)
+        if not user:
+            return {
+                "success": False,
+                "message": "Authentication failed",
+                "email": email
+            }
+        
+        return {
+            "success": True,
+            "user_found": True,
+            "email": email,
+            "is_admin": user.get("is_admin", False)
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e),
+            "email": email
+        }
 
 # Include the router in the main app
 app.include_router(api_router)
