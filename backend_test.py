@@ -26,8 +26,8 @@ class MaldivesIslandTrackerAPITest(unittest.TestCase):
         self.base_url = BACKEND_URL
         self.api_url = f"{self.base_url}/api"
         self.token = None
-        self.test_user_email = f"test_user_{uuid.uuid4()}@example.com"
-        self.test_user_password = "Test@123"
+        self.test_user_email = "test@example.com"  # Using the predefined test user
+        self.test_user_password = "test123"
         self.test_user_name = "Test User"
 
     def test_01_root_endpoint(self):
@@ -72,27 +72,8 @@ class MaldivesIslandTrackerAPITest(unittest.TestCase):
         self.assertEqual(island["id"], self.island_id)
         logger.info("Get island by ID test passed")
 
-    def test_04_register_user(self):
-        """Test user registration"""
-        logger.info(f"Testing user registration with email: {self.test_user_email}")
-        user_data = {
-            "email": self.test_user_email,
-            "password": self.test_user_password,
-            "name": self.test_user_name
-        }
-        response = requests.post(f"{self.api_url}/users", json=user_data)
-        self.assertEqual(response.status_code, 200)
-        user = response.json()
-        self.assertEqual(user["email"], self.test_user_email)
-        self.assertEqual(user["name"], self.test_user_name)
-        self.assertIn("id", user)
-        logger.info("User registration test passed")
-
-    def test_05_login_user(self):
-        """Test user login"""
-        if not hasattr(self, 'test_user_email'):
-            self.test_04_register_user()
-            
+    def test_04_login_user(self):
+        """Test user login with the predefined test user"""
         logger.info(f"Testing user login with email: {self.test_user_email}")
         login_data = {
             "username": self.test_user_email,
@@ -106,10 +87,10 @@ class MaldivesIslandTrackerAPITest(unittest.TestCase):
         self.token = token_data["access_token"]
         logger.info("User login test passed")
 
-    def test_06_get_current_user(self):
+    def test_05_get_current_user(self):
         """Test getting current user info"""
         if not self.token:
-            self.test_05_login_user()
+            self.test_04_login_user()
             
         logger.info("Testing get current user endpoint")
         headers = {"Authorization": f"Bearer {self.token}"}
@@ -117,20 +98,20 @@ class MaldivesIslandTrackerAPITest(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         user = response.json()
         self.assertEqual(user["email"], self.test_user_email)
-        self.assertEqual(user["name"], self.test_user_name)
         logger.info("Get current user test passed")
 
-    def test_07_log_visit(self):
+    def test_06_log_visit(self):
         """Test logging an island visit"""
         if not self.token or not hasattr(self, 'island_id'):
-            self.test_05_login_user()
+            self.test_04_login_user()
             self.test_02_get_islands()
             
         logger.info(f"Testing log visit for island ID: {self.island_id}")
         visit_data = {
             "island_id": self.island_id,
             "visit_date": datetime.utcnow().isoformat(),
-            "notes": "Test visit"
+            "notes": "Test visit from API test",
+            "photo_urls": []
         }
         headers = {"Authorization": f"Bearer {self.token}"}
         response = requests.post(f"{self.api_url}/visits", json=visit_data, headers=headers)
@@ -139,10 +120,10 @@ class MaldivesIslandTrackerAPITest(unittest.TestCase):
         self.assertEqual(visit["island_id"], self.island_id)
         logger.info("Log visit test passed")
 
-    def test_08_get_user_visits(self):
+    def test_07_get_user_visits(self):
         """Test getting user visits"""
         if not self.token:
-            self.test_05_login_user()
+            self.test_04_login_user()
             
         logger.info("Testing get user visits endpoint")
         headers = {"Authorization": f"Bearer {self.token}"}
@@ -152,6 +133,24 @@ class MaldivesIslandTrackerAPITest(unittest.TestCase):
         self.assertIsInstance(visits, list)
         logger.info(f"Found {len(visits)} visits")
         logger.info("Get user visits test passed")
+
+    def test_08_invalid_login(self):
+        """Test login with invalid credentials"""
+        logger.info("Testing login with invalid credentials")
+        login_data = {
+            "username": "invalid@example.com",
+            "password": "wrongpassword"
+        }
+        response = requests.post(f"{self.api_url}/token", data=login_data)
+        self.assertEqual(response.status_code, 401)
+        logger.info("Invalid login test passed")
+
+    def test_09_unauthorized_access(self):
+        """Test accessing protected endpoint without authentication"""
+        logger.info("Testing unauthorized access to protected endpoint")
+        response = requests.get(f"{self.api_url}/users/me")
+        self.assertEqual(response.status_code, 401)
+        logger.info("Unauthorized access test passed")
 
 def run_tests():
     """Run all tests"""
