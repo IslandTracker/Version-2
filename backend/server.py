@@ -302,6 +302,87 @@ async def get_user_visits(current_user: User = Depends(get_current_user)):
     visits = await db.visits.find({"user_id": current_user.id}).to_list(1000)
     return [Visit(**visit) for visit in visits]
 
+# Blog post endpoints
+@api_router.get("/blog-posts", response_model=List[BlogPost])
+async def get_blog_posts(
+    skip: int = 0, 
+    limit: int = 10, 
+    category: Optional[str] = None,
+    tag: Optional[str] = None,
+    search: Optional[str] = None,
+    featured_only: bool = False
+):
+    query = {"is_published": True}
+    
+    if category:
+        query["category"] = category
+    
+    if tag:
+        query["tags"] = {"$in": [tag]}
+    
+    if search:
+        query["$or"] = [
+            {"title": {"$regex": search, "$options": "i"}},
+            {"content": {"$regex": search, "$options": "i"}}
+        ]
+    
+    if featured_only:
+        query["is_featured"] = True
+    
+    # Increment view count
+    total = await db.blog_posts.count_documents(query)
+    
+    # Sort by created_at descending (newest first)
+    cursor = db.blog_posts.find(query).sort("created_at", -1).skip(skip).limit(limit)
+    posts = await cursor.to_list(length=limit)
+    
+    return [BlogPost(**post) for post in posts]
+
+@api_router.get("/blog-posts/{post_id}", response_model=BlogPost)
+async def get_blog_post(post_id: str):
+    post = await db.blog_posts.find_one({"id": post_id})
+    if not post:
+        raise HTTPException(status_code=404, detail="Blog post not found")
+    
+    # Increment view count
+    await db.blog_posts.update_one(
+        {"id": post_id},
+        {"$inc": {"view_count": 1}}
+    )
+    
+    # Get updated post
+    post = await db.blog_posts.find_one({"id": post_id})
+    return BlogPost(**post)
+
+@api_router.get("/blog-posts/slug/{slug}", response_model=BlogPost)
+async def get_blog_post_by_slug(slug: str):
+    post = await db.blog_posts.find_one({"slug": slug})
+    if not post:
+        raise HTTPException(status_code=404, detail="Blog post not found")
+    
+    # Increment view count
+    await db.blog_posts.update_one(
+        {"slug": slug},
+        {"$inc": {"view_count": 1}}
+    )
+    
+    # Get updated post
+    post = await db.blog_posts.find_one({"slug": slug})
+    return BlogPost(**post)
+
+@api_router.get("/blog-categories", response_model=List[str])
+async def get_blog_categories():
+    # Get all unique categories
+    categories = await db.blog_posts.distinct("category", {"is_published": True})
+    return categories
+
+@api_router.get("/blog-tags", response_model=List[str])
+async def get_blog_tags():
+    # Get all unique tags
+    all_tags = await db.blog_posts.distinct("tags", {"is_published": True})
+    # Flatten the list if needed
+    return all_tags
+
 # Sample data initialization
 SAMPLE_ISLANDS = [
     {
