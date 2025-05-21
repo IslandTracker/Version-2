@@ -146,11 +146,15 @@ async def get_user(email: str):
         return UserInDB(**user_dict)
 
 async def authenticate_user(email: str, password: str):
+    logging.info(f"Authenticating user: {email}")
     user = await get_user(email)
     if not user:
+        logging.error(f"User not found: {email}")
         return False
     if not verify_password(password, user.hashed_password):
+        logging.error(f"Invalid password for user: {email}")
         return False
+    logging.info(f"User authenticated successfully: {email}")
     return user
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
