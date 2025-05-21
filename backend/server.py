@@ -193,11 +193,15 @@ async def authenticate_user(email: str, password: str):
         return False
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+    """Create a new JWT token"""
     to_encode = data.copy()
+    
+    # Default to 7 days if no expiration provided
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=15)
+        expire = datetime.utcnow() + timedelta(days=7)
+    
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
