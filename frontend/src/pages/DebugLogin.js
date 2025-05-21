@@ -148,7 +148,7 @@ const DebugLogin = () => {
   };
   
   const goToAdminDashboard = () => {
-    navigate('/admin/dashboard');
+    navigate('/admin/dashboard', { replace: true });
   };
 
   return (
