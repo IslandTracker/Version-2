@@ -335,6 +335,63 @@ async def get_user_visits(current_user: User = Depends(get_current_user)):
     visits = await db.visits.find({"user_id": current_user.id}).to_list(1000)
     return [Visit(**visit) for visit in visits]
 
+# Badges endpoints
+@api_router.get("/badges", response_model=List[Badge])
+async def get_badges():
+    """Get all badges"""
+    badges = [
+        {
+            "id": "1",
+            "name": "Island Explorer",
+            "description": "Visit your first island",
+            "image_url": "https://images.unsplash.com/photo-1672243775941-10d763d9adef?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+            "criteria": {"visits_count": 1},
+            "created_at": datetime.now()
+        },
+        {
+            "id": "2",
+            "name": "Atoll Adventurer",
+            "description": "Visit 3 islands in the same atoll",
+            "image_url": "https://images.unsplash.com/photo-1589979481223-deb893043163?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+            "criteria": {"same_atoll_count": 3},
+            "created_at": datetime.now()
+        },
+        {
+            "id": "3",
+            "name": "Resort Connoisseur",
+            "description": "Visit 3 different resort islands",
+            "image_url": "https://images.unsplash.com/photo-1586861710684-b4e36ae77c4a?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+            "criteria": {"resort_count": 3},
+            "created_at": datetime.now()
+        },
+        {
+            "id": "4",
+            "name": "Local Culture Enthusiast",
+            "description": "Visit 5 inhabited islands",
+            "image_url": "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+            "criteria": {"inhabited_count": 5},
+            "created_at": datetime.now()
+        },
+        {
+            "id": "5",
+            "name": "Maldives Master",
+            "description": "Visit 10 different islands across multiple atolls",
+            "image_url": "https://images.unsplash.com/photo-1573843981242-273fef20a9a5?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+            "criteria": {"total_count": 10, "atolls_count": 3},
+            "created_at": datetime.now()
+        }
+    ]
+    return badges
+
+@api_router.get("/badges/{badge_id}", response_model=Badge)
+async def get_badge(badge_id: str):
+    """Get a badge by ID"""
+    badges = await get_badges()
+    for badge in badges:
+        if badge["id"] == badge_id:
+            return badge
+    raise HTTPException(status_code=404, detail="Badge not found")
+
 # Blog post endpoints
 @api_router.get("/blog-posts", response_model=List[BlogPost])
 async def get_blog_posts(
