@@ -37,12 +37,15 @@ const AdminLogin = () => {
       });
       
       console.log("Admin login check:", userResponse.data);
+      console.log("Is admin flag:", userResponse.data.is_admin);
       
       if (userResponse.data.is_admin === true) {
         // Redirect to admin dashboard
+        console.log("Admin login successful, redirecting to dashboard");
         navigate('/admin/dashboard');
       } else {
         // Not an admin user
+        console.log("User is not an admin");
         setError('You do not have administrator privileges');
         localStorage.removeItem('token');
       }
