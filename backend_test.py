@@ -373,6 +373,93 @@ class MaldivesIslandTrackerAPITest(unittest.TestCase):
         response = requests.get(f"{self.api_url}/admin/users", headers=headers)
         self.assertEqual(response.status_code, 403)
         logger.info("Non-admin access denied test passed")
+        
+    def test_21_get_badges(self):
+        """Test getting the list of badges"""
+        logger.info("Testing get badges endpoint")
+        response = requests.get(f"{self.api_url}/badges")
+        self.assertEqual(response.status_code, 200)
+        badges = response.json()
+        self.assertIsInstance(badges, list)
+        self.assertGreater(len(badges), 0)
+        
+        # Check badge structure
+        first_badge = badges[0]
+        self.assertIn("id", first_badge)
+        self.assertIn("name", first_badge)
+        self.assertIn("description", first_badge)
+        self.assertIn("criteria", first_badge)
+        
+        # Save a badge ID for later tests
+        self.badge_id = first_badge["id"]
+        logger.info(f"Found {len(badges)} badges")
+        logger.info("Get badges test passed")
+        
+    def test_22_get_badge_by_id(self):
+        """Test getting a specific badge by ID"""
+        if not hasattr(self, 'badge_id'):
+            self.test_21_get_badges()
+            
+        logger.info(f"Testing get badge by ID: {self.badge_id}")
+        response = requests.get(f"{self.api_url}/badges/{self.badge_id}")
+        self.assertEqual(response.status_code, 200)
+        badge = response.json()
+        self.assertEqual(badge["id"], self.badge_id)
+        logger.info("Get badge by ID test passed")
+        
+    def test_23_get_challenges(self):
+        """Test getting the list of challenges"""
+        logger.info("Testing get challenges endpoint")
+        response = requests.get(f"{self.api_url}/challenges")
+        self.assertEqual(response.status_code, 200)
+        challenges = response.json()
+        self.assertIsInstance(challenges, list)
+        self.assertGreater(len(challenges), 0)
+        
+        # Check challenge structure
+        first_challenge = challenges[0]
+        self.assertIn("id", first_challenge)
+        self.assertIn("name", first_challenge)
+        self.assertIn("description", first_challenge)
+        self.assertIn("objective", first_challenge)
+        self.assertIn("reward", first_challenge)
+        
+        # Save a challenge ID for later tests
+        self.challenge_id = first_challenge["id"]
+        logger.info(f"Found {len(challenges)} challenges")
+        logger.info("Get challenges test passed")
+        
+    def test_24_get_challenge_by_id(self):
+        """Test getting a specific challenge by ID"""
+        if not hasattr(self, 'challenge_id'):
+            self.test_23_get_challenges()
+            
+        logger.info(f"Testing get challenge by ID: {self.challenge_id}")
+        response = requests.get(f"{self.api_url}/challenges/{self.challenge_id}")
+        self.assertEqual(response.status_code, 200)
+        challenge = response.json()
+        self.assertEqual(challenge["id"], self.challenge_id)
+        logger.info("Get challenge by ID test passed")
+        
+    def test_25_join_challenge(self):
+        """Test joining a challenge"""
+        if not self.token or not hasattr(self, 'challenge_id'):
+            self.test_04_login_user()
+            self.test_23_get_challenges()
+            
+        logger.info(f"Testing join challenge for challenge ID: {self.challenge_id}")
+        headers = {"Authorization": f"Bearer {self.token}"}
+        response = requests.post(f"{self.api_url}/challenges/{self.challenge_id}/join", headers=headers)
+        
+        # The API might return 201 (created) or 400 (already joined)
+        self.assertIn(response.status_code, [201, 400])
+        
+        if response.status_code == 201:
+            logger.info("Successfully joined challenge")
+        else:
+            logger.info("User already joined this challenge or other error occurred")
+            
+        logger.info("Join challenge test passed")
 
 def run_tests():
     """Run all tests"""
