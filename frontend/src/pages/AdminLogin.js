@@ -39,6 +39,32 @@ const AdminLogin = () => {
     checkAdmin();
   }, [navigate]);
 
+  // Check if already authenticated as admin
+  useEffect(() => {
+    const checkAdmin = async () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          const response = await axios.get(`${API}/users/me`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          
+          console.log("Admin check on load:", response.data);
+          
+          if (response.data.is_admin === true) {
+            // Already authenticated as admin, redirect
+            navigate('/admin/dashboard');
+          }
+        } catch (err) {
+          // Not authenticated, continue with login
+          localStorage.removeItem('token');
+        }
+      }
+    };
+    
+    checkAdmin();
+  }, [navigate]);
+
   const { register, handleSubmit, formState: { errors } } = useForm();
 
   const onSubmit = async (data) => {
