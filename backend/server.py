@@ -1337,6 +1337,7 @@ app.add_middleware(
 )
 
 # Root endpoint
-@app.get("/")
+@app.get("/", response_model=dict)
 async def root():
-    return {"message": "Maldives Island Tracker API"}
+    """Root endpoint"""
+    return {"message": "Maldives Island Tracker API", "version": "1.0.0"}
