@@ -94,24 +94,25 @@ class IslandLoggerAPITester:
                 print(f"✅ Passed - Status: {response.status_code}")
                 response_data = response.json()
                 print(f"Response: {json.dumps(response_data, indent=2)}")
-                return success, response_data
+                
+                if 'access_token' in response_data:
+                    self.token = response_data['access_token']
+                    print(f"✅ Token obtained: {self.token[:10]}...")
+                    return True
+                else:
+                    print("❌ No access token in response")
+                    return False
             else:
                 print(f"❌ Failed - Expected 200, got {response.status_code}")
                 try:
                     print(f"Response: {response.json()}")
                 except:
                     print(f"Response: {response.text}")
-                return False, {}
+                return False
                 
         except Exception as e:
             print(f"❌ Failed - Error: {str(e)}")
-            return False, {}
-        
-        if success and 'access_token' in response:
-            self.token = response['access_token']
-            print(f"✅ Token obtained: {self.token[:10]}...")
-            return True
-        return False
+            return False
 
     def test_get_current_user(self):
         """Test getting current user with token"""
