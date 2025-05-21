@@ -176,16 +176,28 @@ const Challenges = () => {
       // Update the UI to show the challenge as joined
       const challengeToJoin = challenges.find(c => c.id === challengeId);
       if (challengeToJoin) {
-        setActiveChallenges(prev => [...prev, challengeToJoin]);
+        // Create a new copy of the challenge with a progress property
+        const joinedChallenge = {
+          ...challengeToJoin,
+          progress: 0,
+          joined_at: new Date().toISOString()
+        };
+        
+        // Update the active challenges state with the new challenge
+        setActiveChallenges(prev => [...prev, joinedChallenge]);
         
         // Remove from available challenges
         setChallenges(prev => prev.filter(c => c.id !== challengeId));
+        
+        // Show success message
+        toast.success(`Successfully joined the ${challengeToJoin.name} challenge!`);
       }
       
       setError(null);
     } catch (err) {
       console.error('Error joining challenge:', err);
       setError('Failed to join challenge. Please try again.');
+      toast.error('Failed to join challenge. Please try again.');
     } finally {
       setLoading(false);
     }
