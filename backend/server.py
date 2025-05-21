@@ -1352,6 +1352,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Include the router in the main app
+app.include_router(api_router)
+
 # Root endpoint
 @app.get("/", response_model=dict)
 async def root():
