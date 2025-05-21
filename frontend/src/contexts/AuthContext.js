@@ -48,11 +48,21 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       setLoading(true);
+      console.log("Logging in with:", { email });
+      
+      // Using FormData for the OAuth2 password flow
       const formData = new FormData();
       formData.append('username', email);
       formData.append('password', password);
 
-      const response = await axios.post(`${API}/token`, formData);
+      const response = await axios.post(`${API}/token`, formData, {
+        headers: {
+          // Don't set Content-Type header - axios will set it correctly with boundary for FormData
+          'Accept': 'application/json',
+        }
+      });
+      
+      console.log("Login response:", response.data);
       const { access_token } = response.data;
       
       localStorage.setItem('token', access_token);
