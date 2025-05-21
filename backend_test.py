@@ -30,8 +30,8 @@ class MaldivesIslandTrackerAPITest(unittest.TestCase):
         self.test_user_email = "test@example.com"  # Using the predefined test user
         self.test_user_password = "test123"
         self.test_user_name = "Test User"
-        self.admin_email = "admin@islandlogger.mv"  # Using the predefined admin user
-        self.admin_password = "admin123"
+        self.admin_email = "superadmin@islandlogger.mv"  # Using the predefined admin user
+        self.admin_password = "super123"
 
     def test_01_root_endpoint(self):
         """Test the root endpoint"""
