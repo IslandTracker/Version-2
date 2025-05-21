@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Check if token exists and fetch user data on app load
+  // Fetch user data and ensure we're storing admin status
   useEffect(() => {
     const fetchCurrentUser = async () => {
       const token = localStorage.getItem('token');
@@ -28,6 +28,8 @@ export const AuthProvider = ({ children }) => {
           headers: { Authorization: `Bearer ${token}` }
         });
         setCurrentUser(response.data);
+        // Make sure we retain the is_admin flag
+        console.log("User data:", response.data);
         setError(null);
       } catch (err) {
         console.error('Failed to fetch user:', err);
