@@ -68,18 +68,17 @@ const AdminLogin = () => {
       });
       
       console.log("Admin login check:", userResponse.data);
-      console.log("Is admin flag:", userResponse.data.is_admin);
       
+      // Use strict comparison with the boolean value true
       if (userResponse.data.is_admin === true) {
-        // Redirect to admin dashboard
-        console.log("Admin login successful, redirecting to dashboard");
+        // Successfully authenticated as admin
         navigate('/admin/dashboard');
-      } else {
-        // Not an admin user
-        console.log("User is not an admin");
-        setError('You do not have administrator privileges');
-        localStorage.removeItem('token');
+        return;
       }
+      
+      // Not an admin user
+      setError('You do not have administrator privileges');
+      localStorage.removeItem('token');
     } catch (err) {
       console.error('Admin login error:', err);
       setError('Failed to login. Please check your credentials and try again.');
