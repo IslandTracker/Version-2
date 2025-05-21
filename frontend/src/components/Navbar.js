@@ -41,6 +41,11 @@ const Navbar = () => {
                   <Link to="/challenges" className="inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-white text-sm font-medium">
                     Challenges
                   </Link>
+                  {currentUser.is_admin && (
+                    <Link to="/admin/dashboard" className="inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-white bg-blue-600 rounded px-2 text-sm font-medium">
+                      Admin Dashboard
+                    </Link>
+                  )}
                 </>
               )}
             </div>
