@@ -93,7 +93,7 @@ const PublicLayout = () => {
   );
 };
 
-// Protected Route component
+  // Protected Route with admin-specific routing
 const ProtectedRoute = ({ children, requireAdmin = false }) => {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(null);
@@ -114,7 +114,9 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
         });
         
         setIsAuthenticated(true);
+        // Check explicitly for the is_admin field
         setIsAdmin(response.data.is_admin === true);
+        console.log("Admin check:", response.data.is_admin, isAdmin);
       } catch (error) {
         console.error("Authentication error:", error);
         localStorage.removeItem("token");
