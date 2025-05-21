@@ -146,7 +146,24 @@ class MaldivesIslandTrackerAPITest(unittest.TestCase):
         }
         response = requests.post(f"{self.api_url}/token", data=login_data)
         self.assertEqual(response.status_code, 401)
+        # Verify error message is returned
+        error_data = response.json()
+        self.assertIn("detail", error_data)
         logger.info("Invalid login test passed")
+        
+    def test_08a_admin_invalid_login(self):
+        """Test admin login with invalid credentials"""
+        logger.info("Testing admin login with invalid credentials")
+        login_data = {
+            "username": "superadmin@islandlogger.mv",
+            "password": "wrongpassword"
+        }
+        response = requests.post(f"{self.api_url}/token", data=login_data)
+        self.assertEqual(response.status_code, 401)
+        # Verify error message is returned
+        error_data = response.json()
+        self.assertIn("detail", error_data)
+        logger.info("Admin invalid login test passed")
 
     def test_09_unauthorized_access(self):
         """Test accessing protected endpoint without authentication"""
