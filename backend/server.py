@@ -25,6 +25,7 @@ load_dotenv(ROOT_DIR / '.env')
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
 db_name = os.environ.get('DB_NAME', 'maldives_tracker')
+logging.info(f"Connecting to MongoDB at {mongo_url}, using database {db_name}")
 client = AsyncIOMotorClient(mongo_url)
 db = client[db_name]
 
