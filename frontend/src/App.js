@@ -15,6 +15,11 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import VisitForm from "./pages/VisitForm";
 import Challenges from "./pages/Challenges";
+import BlogList from "./pages/BlogList";
+import BlogDetail from "./pages/BlogDetail";
+import AdminLogin from "./pages/AdminLogin";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminBlogList from "./pages/AdminBlogList";
 
 // Context
 import { AuthProvider } from "./contexts/AuthContext";
@@ -27,43 +32,72 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <div className="flex flex-col min-h-screen">
-          <Navbar />
-          <main className="flex-grow">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/map" element={<Map />} />
-              <Route path="/islands" element={<IslandList />} />
-              <Route path="/islands/:id" element={<IslandDetail />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/dashboard" element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              } />
-              <Route path="/log-visit/:islandId?" element={
-                <ProtectedRoute>
-                  <VisitForm />
-                </ProtectedRoute>
-              } />
-              <Route path="/challenges" element={
-                <ProtectedRoute>
-                  <Challenges />
-                </ProtectedRoute>
-              } />
-            </Routes>
-          </main>
-          <Footer />
+          <Routes>
+            {/* Admin Routes */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={
+              <ProtectedRoute requireAdmin={true}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/blog" element={
+              <ProtectedRoute requireAdmin={true}>
+                <AdminBlogList />
+              </ProtectedRoute>
+            } />
+            
+            {/* Public Routes with Navbar and Footer */}
+            <Route path="*" element={<PublicLayout />} />
+          </Routes>
         </div>
       </BrowserRouter>
     </AuthProvider>
   );
 }
 
+// Public layout with navbar and footer
+const PublicLayout = () => {
+  return (
+    <>
+      <Navbar />
+      <main className="flex-grow">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/map" element={<Map />} />
+          <Route path="/islands" element={<IslandList />} />
+          <Route path="/islands/:id" element={<IslandDetail />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/log-visit/:islandId?" element={
+            <ProtectedRoute>
+              <VisitForm />
+            </ProtectedRoute>
+          } />
+          <Route path="/challenges" element={
+            <ProtectedRoute>
+              <Challenges />
+            </ProtectedRoute>
+          } />
+          <Route path="/blog" element={<BlogList />} />
+          <Route path="/blog/:slug" element={<BlogDetail />} />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </main>
+      <Footer />
+    </>
+  );
+};
+
 // Protected Route component
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = ({ children, requireAdmin = false }) => {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     // Check if user is authenticated
@@ -78,11 +112,14 @@ const ProtectedRoute = ({ children }) => {
         const response = await axios.get(`${API}/users/me`, {
           headers: { Authorization: `Bearer ${token}` }
         });
+        
         setIsAuthenticated(true);
+        setIsAdmin(response.data.is_admin === true);
       } catch (error) {
         console.error("Authentication error:", error);
         localStorage.removeItem("token");
         setIsAuthenticated(false);
+        setIsAdmin(false);
       }
     };
 
@@ -97,6 +134,11 @@ const ProtectedRoute = ({ children }) => {
   if (!isAuthenticated) {
     // Redirect to login if not authenticated
     return <Navigate to="/login" />;
+  }
+
+  if (requireAdmin && !isAdmin) {
+    // Redirect to home if admin access is required but user is not an admin
+    return <Navigate to="/" />;
   }
 
   return children;
