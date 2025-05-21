@@ -1327,8 +1327,21 @@ async def debug_login(email: str = Body(...), password: str = Body(...)):
             "email": email
         }
 
-# Include the router in the main app
-app.include_router(api_router)
+@api_router.get("/", response_model=dict)
+async def api_root():
+    """API root endpoint"""
+    return {
+        "message": "Maldives Island Tracker API",
+        "version": "1.0.0",
+        "endpoints": [
+            "/api/islands",
+            "/api/badges",
+            "/api/challenges",
+            "/api/blog-posts",
+            "/api/users",
+            "/api/token"
+        ]
+    }
 
 # CORS middleware
 app.add_middleware(
