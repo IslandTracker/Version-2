@@ -86,8 +86,6 @@ const PublicLayout = () => {
           <Route path="/map" element={<Map />} />
           <Route path="/islands" element={<IslandList />} />
           <Route path="/islands/:id" element={<IslandDetail />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={
             <ProtectedRoute>
               <Dashboard />
@@ -105,7 +103,7 @@ const PublicLayout = () => {
           } />
           <Route path="/blog" element={<BlogList />} />
           <Route path="/blog/:slug" element={<BlogDetail />} />
-          <Route path="*" element={<Navigate to="/" />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
       <Footer />
