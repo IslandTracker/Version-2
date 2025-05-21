@@ -271,11 +271,15 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
         logging.info(f"Authentication successful for user: {form_data.username}")
         
         return {"access_token": access_token, "token_type": "bearer"}
+    except HTTPException as he:
+        # Re-raise HTTP exceptions with their original status codes
+        raise he
     except Exception as e:
         logging.error(f"Login error: {str(e)}")
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=status.HTTP_401_UNAUTHORIZED,
             detail=f"Login error: {str(e)}",
+            headers={"WWW-Authenticate": "Bearer"},
         )
 
 # User endpoints
