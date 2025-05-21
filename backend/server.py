@@ -30,6 +30,11 @@ client = AsyncIOMotorClient(mongo_url)
 db = client[db_name]
 
 # Initialize collections
+users_collection = db.users
+islands_collection = db.islands
+visits_collection = db.visits
+challenges_collection = db.challenges
+blog_posts_collection = db.blog_posts
 ads_collection = db.ads
 
 # Create the main app without a prefix
