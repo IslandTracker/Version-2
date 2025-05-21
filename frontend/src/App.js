@@ -25,6 +25,7 @@ import BlogDetail from "./pages/BlogDetail";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminBlogList from "./pages/AdminBlogList";
+import DebugLogin from "./pages/DebugLogin"; // Add this import
 
 // Context
 import { AuthProvider } from "./contexts/AuthContext";
