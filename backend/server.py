@@ -1279,28 +1279,38 @@ async def create_admin(admin_password: str):
     # Check if admin already exists
     admin_user = await db.users.find_one({"email": "superadmin@islandlogger.mv"})
     
+    # Create or update admin user
+    hashed_password = get_password_hash("super123")
+    
     if admin_user:
         # Update the user to ensure admin access
         await db.users.update_one(
             {"email": "superadmin@islandlogger.mv"},
-            {"$set": {"is_admin": True}}
+            {"$set": {
+                "hashed_password": hashed_password,
+                "is_admin": True,
+                "name": "Super Admin",
+                "updated_at": datetime.now()
+            }}
         )
-        return {"message": "Admin user already exists and has been updated with admin privileges"}
-    
-    # Create admin user
-    hashed_password = get_password_hash("super123")
-    admin_user = {
-        "id": str(uuid.uuid4()),
-        "email": "superadmin@islandlogger.mv",
-        "name": "Super Admin",
-        "hashed_password": hashed_password,
-        "is_admin": True,
-        "created_at": datetime.now(),
-        "updated_at": datetime.now(),
-    }
-    
-    await db.users.insert_one(admin_user)
-    return {"message": "Admin user created successfully"}
+        return {"message": "Admin user updated with fresh credentials"}
+    else:
+        # Create admin user
+        admin_user = {
+            "id": str(uuid.uuid4()),
+            "email": "superadmin@islandlogger.mv",
+            "name": "Super Admin",
+            "hashed_password": hashed_password,
+            "is_admin": True,
+            "created_at": datetime.now(),
+            "updated_at": datetime.now(),
+            "visited_islands": [],
+            "badges": [],
+            "active_challenges": []
+        }
+        
+        await db.users.insert_one(admin_user)
+        return {"message": "Admin user created successfully"}
 
 @api_router.post("/debug-login")
 async def debug_login(email: str = Body(...), password: str = Body(...)):
