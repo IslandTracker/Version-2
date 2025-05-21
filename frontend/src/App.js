@@ -135,7 +135,7 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
     checkAuth();
   }, []);
 
-  if (isAuthenticated === null) {
+  if (checkingAuth) {
     // Still checking authentication
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
@@ -146,6 +146,7 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
   }
 
   if (requireAdmin && !isAdmin) {
+    console.log("User is not admin, redirecting to home");
     // Redirect to home if admin access is required but user is not an admin
     return <Navigate to="/" />;
   }
