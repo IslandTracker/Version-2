@@ -98,35 +98,42 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
 
   useEffect(() => {
     // Check if user is authenticated
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setIsAuthenticated(false);
-      return;
-    }
+    const checkAuth = async () => {
+      setCheckingAuth(true);
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setIsAuthenticated(false);
+        setCheckingAuth(false);
+        return;
+      }
 
-    const verifyToken = async () => {
       try {
         const response = await axios.get(`${API}/users/me`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         
+        console.log("Auth check:", response.data);
+        
         setIsAuthenticated(true);
         // Check explicitly for the is_admin field
         setIsAdmin(response.data.is_admin === true);
-        console.log("Admin check:", response.data.is_admin, isAdmin);
+        console.log("Admin check:", response.data.is_admin, "Set to:", response.data.is_admin === true);
       } catch (error) {
         console.error("Authentication error:", error);
         localStorage.removeItem("token");
         setIsAuthenticated(false);
         setIsAdmin(false);
+      } finally {
+        setCheckingAuth(false);
       }
     };
 
-    verifyToken();
-  }, [navigate]);
+    checkAuth();
+  }, []);
 
   if (isAuthenticated === null) {
     // Still checking authentication
