@@ -56,12 +56,13 @@ const AdminRoutes = () => {
     <ProtectedRoute requireAdmin={true}>
       <AdminLayout>
         <Routes>
+          <Route index element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="blog" element={<AdminBlogList />} />
           <Route path="islands" element={<div>Island Management (Coming Soon)</div>} />
           <Route path="users" element={<div>User Management (Coming Soon)</div>} />
           <Route path="challenges" element={<div>Challenge Management (Coming Soon)</div>} />
-          <Route path="*" element={<Navigate to="/admin/dashboard" />} />
+          <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
         </Routes>
       </AdminLayout>
     </ProtectedRoute>
