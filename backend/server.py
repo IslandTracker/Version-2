@@ -1094,15 +1094,17 @@ async def shutdown_db_client():
 
 @app.get("/debug-user/{email}")
 async def debug_user(email: str):
-    user = await db.users.find_one({"email": email})
-    if not user:
+    user_dict = await db.users.find_one({"email": email})
+    if not user_dict:
         return {"status": "User not found"}
     
-    # Don't return password
-    if "hashed_password" in user:
-        user["hashed_password"] = "[REDACTED]"
-    
-    return user
+    # Return only specific fields we care about
+    return {
+        "email": user_dict.get("email"),
+        "name": user_dict.get("name"),
+        "is_admin": user_dict.get("is_admin", False),
+        "id": user_dict.get("id")
+    }
 
 # Include the router in the main app
 app.include_router(api_router)
