@@ -163,6 +163,15 @@ const Navbar = () => {
               >
                 Challenges
               </Link>
+              {currentUser.is_admin && (
+                <Link
+                  to="/admin/dashboard"
+                  className="block pl-3 pr-4 py-2 border-l-4 border-blue-400 bg-blue-600 text-base font-medium"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Admin Dashboard
+                </Link>
+              )}
             </>
           )}
         </div>
