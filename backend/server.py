@@ -170,16 +170,27 @@ async def get_user(email: str):
         return UserInDB(**user_dict)
 
 async def authenticate_user(email: str, password: str):
-    logging.info(f"Authenticating user: {email}")
-    user = await get_user(email)
-    if not user:
-        logging.error(f"User not found: {email}")
+    """Authenticate a user with email and password"""
+    try:
+        logging.info(f"Authenticating user: {email}")
+        
+        # Find user in database
+        user_dict = await db.users.find_one({"email": email})
+        
+        if not user_dict:
+            logging.error(f"User not found: {email}")
+            return False
+        
+        # Verify password
+        if not verify_password(password, user_dict["hashed_password"]):
+            logging.error(f"Invalid password for user: {email}")
+            return False
+        
+        logging.info(f"User authenticated successfully: {email}")
+        return user_dict
+    except Exception as e:
+        logging.error(f"Authentication error: {str(e)}")
         return False
-    if not verify_password(password, user.hashed_password):
-        logging.error(f"Invalid password for user: {email}")
-        return False
-    logging.info(f"User authenticated successfully: {email}")
-    return user
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
