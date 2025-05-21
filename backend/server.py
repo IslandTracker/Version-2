@@ -1395,8 +1395,9 @@ async def create_ad(ad: dict, current_admin: User = Depends(get_current_admin)):
     
     result = await ads_collection.insert_one(ad)
     
-    # Get the created ad
+    # Get the created ad and convert MongoDB _id to string
     created_ad = await ads_collection.find_one({"_id": result.inserted_id})
+    created_ad["_id"] = str(created_ad["_id"])
     return created_ad
 
 @api_router.put("/admin/ads/{ad_id}", response_model=dict)
