@@ -262,6 +262,8 @@ async def create_user(user: UserCreate):
 
 @api_router.get("/users/me", response_model=User)
 async def read_users_me(current_user: User = Depends(get_current_user)):
+    # Log the is_admin status
+    logging.info(f"User {current_user.email} is_admin: {current_user.is_admin}")
     return current_user
 
 # Island endpoints
