@@ -1365,6 +1365,63 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Advertisement endpoints
+@api_router.get("/ads", response_model=List[dict])
+async def get_ads():
+    """Get all advertisements"""
+    ads = await ads_collection.find().to_list(1000)
+    return ads
+
+@api_router.get("/ads/{ad_id}", response_model=dict)
+async def get_ad(ad_id: str):
+    """Get an advertisement by ID"""
+    ad = await ads_collection.find_one({"id": ad_id})
+    if not ad:
+        raise HTTPException(status_code=404, detail="Advertisement not found")
+    return ad
+
+@api_router.post("/admin/ads", response_model=dict)
+async def create_ad(ad: dict, current_admin: User = Depends(get_current_admin)):
+    """Create a new advertisement"""
+    # Ensure the ad has a unique ID
+    ad["id"] = str(uuid.uuid4())
+    ad["created_at"] = datetime.now()
+    ad["updated_at"] = datetime.now()
+    
+    result = await ads_collection.insert_one(ad)
+    
+    # Get the created ad
+    created_ad = await ads_collection.find_one({"_id": result.inserted_id})
+    return created_ad
+
+@api_router.put("/admin/ads/{ad_id}", response_model=dict)
+async def update_ad(ad_id: str, ad_update: dict, current_admin: User = Depends(get_current_admin)):
+    """Update an advertisement"""
+    # Remove ID field from update if present
+    ad_update.pop("id", None)
+    ad_update["updated_at"] = datetime.now()
+    
+    result = await ads_collection.update_one(
+        {"id": ad_id},
+        {"$set": ad_update}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Advertisement not found")
+    
+    updated_ad = await ads_collection.find_one({"id": ad_id})
+    return updated_ad
+
+@api_router.delete("/admin/ads/{ad_id}", status_code=204)
+async def delete_ad(ad_id: str, current_admin: User = Depends(get_current_admin)):
+    """Delete an advertisement"""
+    result = await ads_collection.delete_one({"id": ad_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Advertisement not found")
+    
+    return None
+
 # Include the router in the main app
 app.include_router(api_router)
 
