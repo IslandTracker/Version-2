@@ -18,7 +18,7 @@ const VisitForm = () => {
   const { currentUser, updateUserData } = useAuth();
   const navigate = useNavigate();
   
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm({
+  const { register, handleSubmit, setValue, formState: { errors }, watch } = useForm({
     defaultValues: {
       island_id: islandId || '',
       visit_date: new Date().toISOString().split('T')[0],
@@ -26,6 +26,10 @@ const VisitForm = () => {
       photo_urls: []
     }
   });
+  
+  // Track selected files for preview
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [uploadedImageUrls, setUploadedImageUrls] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
