@@ -148,17 +148,16 @@ class BlogPost(BaseModel):
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
 # Helper functions
-def verify_password(plain_password, hashed_password):
-    logging.info("Verifying password")
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """Verify password against hash"""
     try:
-        result = pwd_context.verify(plain_password, hashed_password)
-        logging.info(f"Password verification result: {result}")
-        return result
+        return pwd_context.verify(plain_password, hashed_password)
     except Exception as e:
-        logging.error(f"Error verifying password: {e}")
+        logging.error(f"Password verification error: {str(e)}")
         return False
 
-def get_password_hash(password):
+def get_password_hash(password: str) -> str:
+    """Generate password hash"""
     return pwd_context.hash(password)
 
 async def get_user(email: str):
