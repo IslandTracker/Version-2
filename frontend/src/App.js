@@ -25,7 +25,15 @@ import BlogDetail from "./pages/BlogDetail";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminBlogList from "./pages/AdminBlogList";
-import DebugLogin from "./pages/DebugLogin"; // Add this import
+import DebugLogin from "./pages/DebugLogin";
+import AdminIslandList from "./pages/AdminIslandList";
+import AdminIslandForm from "./pages/AdminIslandForm";
+import AdminUserList from "./pages/AdminUserList";
+import AdminUserForm from "./pages/AdminUserForm";
+import AdminChallengeList from "./pages/AdminChallengeList";
+import AdminChallengeForm from "./pages/AdminChallengeForm";
+import AdminAdList from "./pages/AdminAdList";
+import AdminAdForm from "./pages/AdminAdForm"; // Add this import
 
 // Context
 import { AuthProvider } from "./contexts/AuthContext";
