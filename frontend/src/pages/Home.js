@@ -9,7 +9,9 @@ const API = `${BACKEND_URL}/api`;
 const Home = () => {
   const { currentUser } = useAuth();
   const [featuredPosts, setFeaturedPosts] = useState([]);
+  const [ongoingChallenges, setOngoingChallenges] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [challengesLoading, setChallengesLoading] = useState(false);
 
   // Fetch featured blog posts
   useEffect(() => {
@@ -26,6 +28,62 @@ const Home = () => {
     };
 
     fetchFeaturedPosts();
+  }, []);
+
+  // Fetch ongoing challenges
+  useEffect(() => {
+    const fetchOngoingChallenges = async () => {
+      try {
+        setChallengesLoading(true);
+        // For MVP, using hardcoded sample data as in the Challenges.js
+        // In a full implementation, would fetch from API
+        const sampleChallenges = [
+          {
+            id: '1',
+            name: 'Kaafu Atoll Explorer',
+            description: 'Visit 3 islands in Kaafu Atoll',
+            objective: { atoll: 'Kaafu', count: 3 },
+            duration_days: 90,
+            reward: { badge: 'Kaafu Expert', points: 500 },
+            is_active: true,
+            progress: 1,
+            days_left: 62,
+            image_url: 'https://images.unsplash.com/photo-1573843981242-273fef20a9a5?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
+          },
+          {
+            id: '2',
+            name: 'Local Island Experience',
+            description: 'Visit 5 inhabited islands to experience local Maldivian culture',
+            objective: { island_type: 'inhabited', count: 5 },
+            duration_days: 180,
+            reward: { badge: 'Cultural Immersion', points: 750 },
+            is_active: true,
+            progress: 1,
+            days_left: 152,
+            image_url: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
+          },
+          {
+            id: '3',
+            name: 'Resort Connoisseur',
+            description: 'Visit 3 different resort islands',
+            objective: { island_type: 'resort', count: 3 },
+            duration_days: 365,
+            reward: { badge: 'Luxury Traveler', points: 500 },
+            is_active: true,
+            progress: 0,
+            days_left: 365,
+            image_url: 'https://images.unsplash.com/photo-1586861710684-b4e36ae77c4a?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
+          }
+        ];
+        setOngoingChallenges(sampleChallenges);
+      } catch (err) {
+        console.error('Error fetching ongoing challenges:', err);
+      } finally {
+        setChallengesLoading(false);
+      }
+    };
+
+    fetchOngoingChallenges();
   }, []);
 
   return (
