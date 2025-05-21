@@ -163,6 +163,9 @@ def get_password_hash(password):
 async def get_user(email: str):
     user_dict = await db.users.find_one({"email": email})
     if user_dict:
+        # Ensure is_admin is included in the user object
+        is_admin = user_dict.get("is_admin", False)
+        logging.info(f"Found user {email}, is_admin: {is_admin}")
         return UserInDB(**user_dict)
 
 async def authenticate_user(email: str, password: str):
