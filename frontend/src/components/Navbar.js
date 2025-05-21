@@ -135,6 +135,13 @@ const Navbar = () => {
           >
             Islands
           </Link>
+          <Link
+            to="/blog"
+            className="block pl-3 pr-4 py-2 border-l-4 border-transparent hover:bg-blue-600 text-base font-medium"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Blog
+          </Link>
           {currentUser && (
             <>
               <Link
