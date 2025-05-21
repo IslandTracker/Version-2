@@ -21,25 +21,28 @@ const AdminLogin = () => {
       setError('');
       
       // Try to login
-      const success = await login(data.email, data.password);
+      const formData = new FormData();
+      formData.append('username', data.email);
+      formData.append('password', data.password);
+
+      // Use direct API call instead of the login function to prevent automatic redirects
+      const response = await axios.post(`${API}/token`, formData);
+      const { access_token } = response.data;
       
-      if (success) {
-        // Check if user is admin
-        const token = localStorage.getItem('token');
-        const userResponse = await axios.get(`${API}/users/me`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        
-        if (userResponse.data.is_admin) {
-          // Redirect to admin dashboard
-          navigate('/admin/dashboard');
-        } else {
-          // Not an admin user
-          setError('You do not have administrator privileges');
-          localStorage.removeItem('token');
-        }
+      localStorage.setItem('token', access_token);
+      
+      // Check if user is admin
+      const userResponse = await axios.get(`${API}/users/me`, {
+        headers: { Authorization: `Bearer ${access_token}` }
+      });
+      
+      if (userResponse.data.is_admin) {
+        // Redirect to admin dashboard
+        navigate('/admin/dashboard');
       } else {
-        setError('Invalid login credentials');
+        // Not an admin user
+        setError('You do not have administrator privileges');
+        localStorage.removeItem('token');
       }
     } catch (err) {
       console.error('Admin login error:', err);
