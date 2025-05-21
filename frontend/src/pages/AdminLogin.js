@@ -46,6 +46,11 @@ const AdminLogin = () => {
       setLoading(true);
       setError('');
       
+      // Special case for superadmin
+      if (data.email === 'superadmin@islandlogger.mv') {
+        console.log("Attempting superadmin login");
+      }
+      
       // Try to login
       const formData = new FormData();
       formData.append('username', data.email);
