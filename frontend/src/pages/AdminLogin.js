@@ -58,7 +58,12 @@ const AdminLogin = () => {
 
       // Use direct API call instead of the login function
       console.log("Submitting login request to:", `${API}/token`);
-      const response = await axios.post(`${API}/token`, formData);
+      const response = await axios.post(`${API}/token`, formData, {
+        headers: {
+          // Don't set Content-Type header - axios will set it correctly with boundary for FormData
+          'Accept': 'application/json',
+        }
+      });
       const { access_token } = response.data;
       
       // Store the token
