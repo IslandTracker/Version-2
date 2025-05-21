@@ -103,7 +103,7 @@ const PublicLayout = () => {
   );
 };
 
-  // Protected Route with admin-specific routing
+// Protected Route component with admin access control
 const ProtectedRoute = ({ children, requireAdmin = false }) => {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(null);
@@ -126,14 +126,19 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
           headers: { Authorization: `Bearer ${token}` }
         });
         
-        console.log("Auth check:", response.data);
+        console.log("Auth check response:", response.data);
         
         // Strictly check admin status for admin routes
         const isAdminUser = response.data.is_admin === true;
         setIsAuthenticated(true);
         setIsAdmin(isAdminUser);
         
-        console.log("Admin check:", response.data.is_admin, "isAdminUser:", isAdminUser);
+        // Log auth status for debugging
+        console.log("Auth status:", {
+          isAuthenticated: true,
+          isAdmin: isAdminUser,
+          requireAdmin
+        });
       } catch (error) {
         console.error("Authentication error:", error);
         localStorage.removeItem("token");
@@ -145,22 +150,49 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
     };
 
     checkAuth();
-  }, []);
+  }, [requireAdmin]);
 
   if (checkingAuth) {
-    // Still checking authentication
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+    // Show loading indicator while checking auth
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
   }
 
   if (!isAuthenticated) {
-    // Redirect to the appropriate login page
+    // Redirect to appropriate login page
+    console.log("Not authenticated, redirecting to", requireAdmin ? "/admin/login" : "/login");
     return <Navigate to={requireAdmin ? "/admin/login" : "/login"} />;
   }
 
   if (requireAdmin && !isAdmin) {
-    console.log("User is not admin, redirecting to home");
-    // Redirect to home if admin access is required but user is not an admin
-    return <Navigate to="/" />;
+    // Show access denied for non-admin users trying to access admin routes
+    console.log("Access denied: User is not an admin");
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+        <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
+          <div className="flex items-center justify-center text-red-500 mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-bold text-center text-gray-800 mb-4">Access Denied</h1>
+          <p className="text-gray-600 text-center mb-6">
+            You do not have administrator privileges to access this area.
+          </p>
+          <div className="flex justify-center">
+            <button
+              onClick={() => navigate("/")}
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              Return to Home
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return children;
