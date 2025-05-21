@@ -1,9 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
 
 const Home = () => {
   const { currentUser } = useAuth();
+  const [featuredPosts, setFeaturedPosts] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch featured blog posts
+  useEffect(() => {
+    const fetchFeaturedPosts = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`${API}/blog-posts?featured_only=true&limit=3`);
+        setFeaturedPosts(response.data);
+      } catch (err) {
+        console.error('Error fetching featured posts:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFeaturedPosts();
+  }, []);
 
   return (
     <div className="flex flex-col">
