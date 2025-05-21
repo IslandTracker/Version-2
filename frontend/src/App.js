@@ -69,9 +69,25 @@ const AdminRoutes = () => {
           <Route index element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="blog" element={<AdminBlogList />} />
-          <Route path="islands" element={<div>Island Management (Coming Soon)</div>} />
-          <Route path="users" element={<div>User Management (Coming Soon)</div>} />
-          <Route path="challenges" element={<div>Challenge Management (Coming Soon)</div>} />
+          <Route path="blog/new" element={<div>New Blog Post (Coming Soon)</div>} />
+          <Route path="blog/edit/:id" element={<div>Edit Blog Post (Coming Soon)</div>} />
+          
+          <Route path="islands" element={<AdminIslandList />} />
+          <Route path="islands/new" element={<AdminIslandForm />} />
+          <Route path="islands/edit/:id" element={<AdminIslandForm />} />
+          
+          <Route path="users" element={<AdminUserList />} />
+          <Route path="users/new" element={<AdminUserForm />} />
+          <Route path="users/edit/:id" element={<AdminUserForm />} />
+          
+          <Route path="challenges" element={<AdminChallengeList />} />
+          <Route path="challenges/new" element={<AdminChallengeForm />} />
+          <Route path="challenges/edit/:id" element={<AdminChallengeForm />} />
+          
+          <Route path="ads" element={<AdminAdList />} />
+          <Route path="ads/new" element={<AdminAdForm />} />
+          <Route path="ads/edit/:id" element={<AdminAdForm />} />
+          
           <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
         </Routes>
       </AdminLayout>
