@@ -31,29 +31,36 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <div className="flex flex-col min-h-screen">
-          <Routes>
-            {/* Admin Routes */}
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin/dashboard" element={
-              <ProtectedRoute requireAdmin={true}>
-                <AdminDashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/blog" element={
-              <ProtectedRoute requireAdmin={true}>
-                <AdminBlogList />
-              </ProtectedRoute>
-            } />
-            
-            {/* Public Routes with Navbar and Footer */}
-            <Route path="*" element={<PublicLayout />} />
-          </Routes>
-        </div>
+        <Routes>
+          {/* Admin Routes */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/*" element={<AdminRoutes />} />
+          
+          {/* Public Routes with Navbar and Footer */}
+          <Route path="/*" element={<PublicLayout />} />
+        </Routes>
       </BrowserRouter>
     </AuthProvider>
   );
 }
+
+// Admin layout with admin sidebar and routes
+const AdminRoutes = () => {
+  return (
+    <ProtectedRoute requireAdmin={true}>
+      <AdminLayout>
+        <Routes>
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="blog" element={<AdminBlogList />} />
+          <Route path="islands" element={<div>Island Management (Coming Soon)</div>} />
+          <Route path="users" element={<div>User Management (Coming Soon)</div>} />
+          <Route path="challenges" element={<div>Challenge Management (Coming Soon)</div>} />
+          <Route path="*" element={<Navigate to="/admin/dashboard" />} />
+        </Routes>
+      </AdminLayout>
+    </ProtectedRoute>
+  );
+};
 
 // Public layout with navbar and footer
 const PublicLayout = () => {
